@@ -1,11 +1,13 @@
 name = "k-beauty-mirror"
+type = "javascript"
 main = "src/index.ts"
 compatibility_date = "2026-02-09"
-
-[env.production]
-route = "k-beauty-mirror.seansim-kor.workers.dev"
 
 [build]
 command = "npm run build"
 cwd = "./"
-assets_directory = "dist"
+root_dir = "dist"
+
+[env.production]
+route = "k-beauty-mirror.seansim-kor.workers.dev"
+zone_id = ""
