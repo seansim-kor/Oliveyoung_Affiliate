@@ -1,0 +1,7 @@
+{
+  "name": "K-Beauty Mirror",
+  "description": "AI-powered K-Beauty curation and skin analysis for global users.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
