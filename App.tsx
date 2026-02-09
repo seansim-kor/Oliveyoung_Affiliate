@@ -36,7 +36,18 @@ const TEXTS = {
     skinScore: "Skin Score",
     skinAge: "Skin Age",
     privacy: "Your photos are processed securely and never stored.",
-    error: "Failed to analyze image. Please try again with a clearer photo."
+    error: "Failed to analyze image. Please try again with a clearer photo.",
+    whyTitle: "Why K-Beauty Mirror?",
+    whyDesc: "Personalized skincare requires more than just a guess. K-Beauty Mirror uses advanced AI to combine your skin's visual data with local environmental factors like humidity and UV index to suggest the perfect 5-step routine.",
+    howTitle: "How Our AI Works",
+    howStep1: "1. Visual Analysis: Our model scans for texture, hydration levels, and sensitivity.",
+    howStep2: "2. Environmental Sync: We fetch real-time weather and air quality data for your location.",
+    howStep3: "3. Curated Match: We match your unique profile with top-rated, proven K-Beauty products.",
+    faqTitle: "Frequently Asked Questions",
+    faqQ1: "Is my photo stored?",
+    faqA1: "No, your photo is processed in real-time and immediately deleted.",
+    faqQ2: "Are the products sponsored?",
+    faqA2: "Our AI prioritizes efficacy and user reviews from Olive Young's vast database."
   },
   ko: {
     title: "K-뷰티 미러",
@@ -61,7 +72,18 @@ const TEXTS = {
     skinScore: "피부 점수",
     skinAge: "피부 나이",
     privacy: "사진은 안전하게 처리되며 저장되지 않습니다.",
-    error: "이미지 분석에 실패했습니다. 더 선명한 사진으로 다시 시도해주세요."
+    error: "이미지 분석에 실패했습니다. 더 선명한 사진으로 다시 시도해주세요.",
+    whyTitle: "왜 K-뷰티 미러인가요?",
+    whyDesc: "맞춤형 스킨케어는 단순한 추측보다 정확한 데이터가 필요합니다. K-뷰티 미러는 고도화된 AI를 통해 당신의 피부 데이터와 습도, 자외선 지수 등 현지 환경 요소를 결합하여 가장 완벽한 5단계 루틴을 제안합니다.",
+    howTitle: "AI 분석 원리",
+    howStep1: "1. 시각적 분석: AI 모델이 피부 결, 수분 상태, 민감도를 정밀 스캔합니다.",
+    howStep2: "2. 환경 동기화: 현재 위치의 날씨 및 공기질 데이터를 실시간으로 반영합니다.",
+    howStep3: "3. 최적의 매칭: 올리브영의 방대한 데이터베이스를 바탕으로 당신에게 꼭 맞는 제품을 선별합니다.",
+    faqTitle: "자주 묻는 질문(FAQ)",
+    faqQ1: "내 사진이 저장되나요?",
+    faqA1: "아니요, 사진은 실시간 분석 후 즉시 파기되어 안전합니다.",
+    faqQ2: "추천 제품은 광고인가요?",
+    faqA2: "아니요, AI는 오직 성분과 올리브영의 실제 사용자 리뷰를 기준으로 추천합니다."
   }
 };
 
@@ -288,6 +310,59 @@ const App: React.FC = () => {
           {/* Background blobs */}
           <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-rose-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
           <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+
+          {/* SEO/GEO CONTENT SECTIONS */}
+          <div className="px-6 pb-20 space-y-12 relative z-10 border-t border-slate-100 pt-12 mt-8">
+            {/* Why Us Section */}
+            <section>
+              <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <Sparkles size={20} className="text-rose-500" />
+                {t.whyTitle}
+              </h2>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                {t.whyDesc}
+              </p>
+            </section>
+
+            {/* How It Works Section */}
+            <section>
+              <h2 className="text-xl font-bold text-slate-900 mb-4">
+                {t.howTitle}
+              </h2>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-xs font-bold shrink-0">1</div>
+                  <p className="text-slate-600 text-sm">{t.howStep1}</p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xs font-bold shrink-0">2</div>
+                  <p className="text-slate-600 text-sm">{t.howStep2}</p>
+                </div>
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center text-xs font-bold shrink-0">3</div>
+                  <p className="text-slate-600 text-sm">{t.howStep3}</p>
+                </div>
+              </div>
+            </section>
+
+            {/* FAQ Section */}
+            <section className="bg-slate-50 p-6 rounded-3xl">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <AlertCircle size={20} className="text-slate-400" />
+                {t.faqTitle}
+              </h2>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm mb-2">Q: {t.faqQ1}</h3>
+                  <p className="text-slate-600 text-sm italic">A: {t.faqA1}</p>
+                </div>
+                <div className="pt-4 border-t border-slate-200">
+                  <h3 className="font-bold text-slate-800 text-sm mb-2">Q: {t.faqQ2}</h3>
+                  <p className="text-slate-600 text-sm italic">A: {t.faqA2}</p>
+                </div>
+              </div>
+            </section>
+          </div>
         </article>
       )}
 
