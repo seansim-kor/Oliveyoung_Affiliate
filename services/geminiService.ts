@@ -54,6 +54,9 @@ export const analyzeSkin = async (
 
     Recommend a **Complete 5-Step Korean Skincare Routine** tailored to the user's specific skin issues (e.g., dark circles, pores, wrinkles) and environment.
     
+    CRITICAL: Only recommend products from highly popular, widely available K-Beauty brands that are easily searchable on Olive Young (Global/Korea). 
+    Preferred brands: Anua, Round Lab, COSRX, Beauty of Joseon, Torriden, Manyo Factory, Mediheal, Skin1004, Isntree, Aestura, Laneige.
+
     The 5 Steps MUST be:
     1. **Prep**: Toner or Pad (Refine texture)
     2. **Target**: Ampoule or Serum (High-concentration treatment)
@@ -62,7 +65,8 @@ export const analyzeSkin = async (
     5. **Enhance**: Eye Cream, Special Care, or Tone-up (Specific concern focus)
 
     For EACH product in the 5 steps:
-    - Provide specific Product Name and Brand available in Global/Korean market (Olive Young).
+    - Provide specific Product Name and Brand. 
+    - IMPORTANT: keep the 'name' concise (remove extra fluff like 'special edition', 'renewed', or long descriptions) to ensure high search hit rate.
     - Identify the 'keyIngredient' (e.g., Centella Asiatica, Retinol, Hyaluronic Acid).
     - Explain 'reason' tailored to the user's age/gender.
     - Provide an estimated 'priceUsd' (integer).

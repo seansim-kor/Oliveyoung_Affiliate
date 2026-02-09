@@ -11,14 +11,14 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeRegion, referralLink }) => {
   const handleBuyClick = () => {
-    // Construct search query
+    // Construct search query - Brand + Name works best for Olive Young
     const query = encodeURIComponent(`${product.brand} ${product.name}`);
-    
+
     // Determine base URL based on Store Region
     const baseUrl = storeRegion === 'KR'
       ? `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${query}`
       : `https://global.oliveyoung.com/display/search?query=${query}`;
-      
+
     window.open(baseUrl, '_blank');
   };
 
@@ -56,19 +56,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
           {config.label}
         </span>
       </div>
-      
+
       <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight">{product.name}</h3>
       <p className="text-sm text-slate-500 font-medium mb-3">{product.brand}</p>
 
       {/* Key Ingredient Pill */}
       {product.keyIngredient && (
         <div className="mb-3">
-           <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-semibold rounded-md uppercase tracking-wide">
-             {product.keyIngredient}
-           </span>
+          <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-semibold rounded-md uppercase tracking-wide">
+            {product.keyIngredient}
+          </span>
         </div>
       )}
-      
+
       {/* Price Display */}
       <div className="flex items-center gap-2 mb-3 border-b border-slate-50 pb-3">
         {storeRegion === 'Global' ? (
@@ -84,8 +84,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
       <p className="text-sm text-slate-600 mb-4 flex-grow leading-relaxed">
         {product.reason}
       </p>
-      
-      <button 
+
+      <button
         onClick={handleBuyClick}
         className="mt-auto w-full py-2.5 px-4 bg-slate-50 text-slate-800 font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors text-sm border border-slate-200 active:scale-95 group/btn"
       >
