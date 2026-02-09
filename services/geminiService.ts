@@ -17,8 +17,8 @@ export const fileToGenerativePart = async (file: File): Promise<string> => {
 };
 
 export const analyzeSkin = async (
-  imageFile: File, 
-  locationName: string, 
+  imageFile: File,
+  locationName: string,
   language: Language,
   demographics: UserDemographics
 ): Promise<AnalysisResult> => {
@@ -82,7 +82,7 @@ export const analyzeSkin = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-flash-preview',
       contents: {
         parts: [
           {
@@ -123,7 +123,7 @@ export const analyzeSkin = async (
                 properties: {
                   label: { type: Type.STRING },
                   description: { type: Type.STRING },
-                  box_2d: { 
+                  box_2d: {
                     type: Type.ARRAY,
                     items: { type: Type.INTEGER },
                     description: "Bounding box [ymin, xmin, ymax, xmax] 0-1000"
