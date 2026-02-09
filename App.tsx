@@ -206,24 +206,25 @@ const App: React.FC = () => {
       )}
 
       {view === AppView.DEMOGRAPHICS && (
-        <div className="min-h-screen flex flex-col max-w-md mx-auto bg-white p-6">
+        <section className="min-h-screen flex flex-col max-w-md mx-auto bg-white p-6">
           <header className="flex justify-between items-center mb-4">
             <button onClick={() => setView(AppView.LANDING)} className="text-slate-400">Back</button>
           </header>
           <DemographicsSelector onComplete={handleDemographicsComplete} initialData={demographics} />
-        </div>
+        </section>
       )}
 
       {view === AppView.LANDING && (
-        <div className="min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-2xl overflow-hidden relative">
+        <article className="min-h-screen flex flex-col max-w-md mx-auto bg-white shadow-2xl overflow-hidden relative">
           <header className="p-6 flex justify-between items-center z-10">
-            <div className="font-bold text-xl tracking-tighter flex items-center gap-2">
+            <div className="font-bold text-xl tracking-tighter flex items-center gap-2" role="banner">
               <span className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white font-serif italic">K</span>
               {t.title}
             </div>
             <button
               onClick={toggleLanguage}
               className="text-xs font-medium px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 flex items-center gap-1 transition-colors"
+              aria-label="Toggle Language"
             >
               <Globe size={12} />
               {language === 'en' ? '한국어' : 'English'}
@@ -291,7 +292,7 @@ const App: React.FC = () => {
       )}
 
       {view === AppView.ANALYZING && (
-        <div className="min-h-screen flex flex-col items-center justify-center max-w-md mx-auto bg-white p-6 text-center relative overflow-hidden">
+        <section className="min-h-screen flex flex-col items-center justify-center max-w-md mx-auto bg-white p-6 text-center relative overflow-hidden">
           <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mb-6 relative">
             <div className="absolute w-full h-full border-4 border-rose-100 rounded-full animate-ping opacity-25"></div>
             <Sparkles className="text-rose-500 animate-pulse" size={32} />
@@ -309,11 +310,11 @@ const App: React.FC = () => {
               100% { transform: translateX(100%); }
             }
           `}</style>
-        </div>
+        </section>
       )}
 
       {view === AppView.RESULTS && result && (
-        <div className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50">
+        <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50">
           {/* Sticky Header */}
           <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
             <div className="font-bold text-lg text-slate-800">{t.report}</div>
