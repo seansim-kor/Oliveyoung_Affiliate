@@ -50,10 +50,10 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      
+
       const ctx = canvas.getContext('2d');
       if (ctx) {
         // Mirror image if in user mode to feel like a mirror
@@ -62,7 +62,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
           ctx.scale(-1, 1);
         }
         ctx.drawImage(video, 0, 0);
-        
+
         canvas.toBlob((blob) => {
           if (blob) {
             const file = new File([blob], "selfie.jpg", { type: "image/jpeg" });
@@ -86,7 +86,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
         </div>
         <h3 className="text-xl font-bold text-white mb-2">Camera Unavailable</h3>
         <p className="text-slate-400 mb-8 max-w-xs">{error}</p>
-        
+
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <Button onClick={onUpload} variant="secondary" fullWidth>
             <Upload size={20} />
@@ -103,17 +103,17 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
       <div className="relative flex-grow bg-black flex items-center justify-center overflow-hidden">
-        <video 
+        <video
           ref={videoRef}
-          autoPlay 
-          playsInline 
-          muted 
+          autoPlay
+          playsInline
+          muted
           className={`w-full h-full object-cover ${facingMode === 'user' ? 'scale-x-[-1]' : ''}`}
         />
         <canvas ref={canvasRef} className="hidden" />
-        
+
         {/* Close Button */}
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-6 right-6 p-3 bg-black/50 text-white rounded-full backdrop-blur-md z-10"
         >
@@ -127,21 +127,27 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
       </div>
 
       <div className="h-32 bg-slate-900 flex items-center justify-around px-8 pb-4">
-        <button 
+        <button
           onClick={toggleCamera}
           className="p-4 rounded-full bg-slate-800 text-slate-300 hover:text-white transition-colors"
         >
           <RefreshCw size={24} />
         </button>
-        
-        <button 
+
+        <button
           onClick={handleCapture}
           className="w-20 h-20 rounded-full bg-white border-4 border-slate-300 flex items-center justify-center active:scale-95 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]"
         >
           <div className="w-16 h-16 rounded-full bg-rose-500"></div>
         </button>
 
-        <div className="w-12"></div> {/* Spacer for alignment */}
+        <button
+          onClick={onUpload}
+          className="p-4 rounded-full bg-slate-800 text-slate-300 hover:text-white transition-colors"
+          title="Upload Photo"
+        >
+          <Upload size={24} />
+        </button>
       </div>
     </div>
   );

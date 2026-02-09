@@ -301,7 +301,11 @@ const App: React.FC = () => {
                 <Camera size={20} />
                 {t.start}
               </Button>
-              <p className="text-center text-xs text-slate-400 mt-4">
+              <Button onClick={triggerFileUpload} fullWidth variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300">
+                <Upload size={20} />
+                {t.upload}
+              </Button>
+              <p className="text-center text-[10px] text-slate-400 mt-4 leading-relaxed">
                 {t.privacy}
               </p>
             </div>
