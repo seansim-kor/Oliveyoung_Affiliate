@@ -22,9 +22,11 @@ export const analyzeSkin = async (
   language: Language,
   demographics: UserDemographics
 ): Promise<AnalysisResult> => {
-  const apiKey = process.env.API_KEY;
+  const apiKey = (typeof process !== 'undefined' && process.env?.API_KEY) ||
+    (typeof import.meta.env !== 'undefined' && import.meta.env.VITE_GEMINI_API_KEY);
+
   if (!apiKey) {
-    throw new Error("API Key is missing. Please set process.env.API_KEY.");
+    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in Cloudflare Pages settings (Production & Preview).");
   }
 
   const ai = new GoogleGenAI({ apiKey });
