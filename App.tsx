@@ -288,7 +288,7 @@ const App: React.FC = () => {
           {/* Background blobs */}
           <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-rose-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
           <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
-        </div>
+        </article>
       )}
 
       {view === AppView.ANALYZING && (
@@ -452,7 +452,7 @@ const App: React.FC = () => {
               </div>
             </Button>
           </div>
-        </div>
+        </article>
       )}
     </>
   );
