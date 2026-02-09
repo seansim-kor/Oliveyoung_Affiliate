@@ -6,7 +6,7 @@ compatibility_date = "2026-02-09"
 [build]
 command = "npm run build"
 cwd = "./"
-root_dir = "dist"
+assets_directory = "dist"
 
 [env.production]
 route = "k-beauty-mirror.seansim-kor.workers.dev"
