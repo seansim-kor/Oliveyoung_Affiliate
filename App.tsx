@@ -70,9 +70,9 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('en');
   const [selectedLocation, setSelectedLocation] = useState<string>(LOCATIONS[1].name); // Default NY
   const [storeRegion, setStoreRegion] = useState<'KR' | 'Global'>('Global');
-  
+
   const [demographics, setDemographics] = useState<UserDemographics>({ gender: 'Female', ageGroup: '20s' });
-  
+
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +86,7 @@ const App: React.FC = () => {
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (userTimezone === 'Asia/Seoul') {
       setStoreRegion('KR');
-      setLanguage('ko'); 
+      setLanguage('ko');
       setSelectedLocation(LOCATIONS.find(l => l.id === 'seoul')?.name || LOCATIONS[0].name);
     } else {
       setStoreRegion('Global');
@@ -107,7 +107,7 @@ const App: React.FC = () => {
 
   const handleDemographicsComplete = (data: UserDemographics) => {
     setDemographics(data);
-    setView(AppView.CAMERA); 
+    setView(AppView.CAMERA);
   };
 
   const handleAnalysis = async (file: File) => {
@@ -124,7 +124,12 @@ const App: React.FC = () => {
       setView(AppView.RESULTS);
     } catch (err: any) {
       console.error(err);
-      setError(t.error);
+      // Show more specific error if it's about the API key
+      if (err.message && err.message.includes("API Key")) {
+        setError(`Environment Configuration Error: ${err.message}`);
+      } else {
+        setError(t.error);
+      }
       setView(AppView.LANDING);
     } finally {
       setAnalyzing(false);
@@ -184,18 +189,18 @@ const App: React.FC = () => {
 
   return (
     <>
-      <input 
-        type="file" 
-        accept="image/*" 
-        className="hidden" 
+      <input
+        type="file"
+        accept="image/*"
+        className="hidden"
         ref={fileInputRef}
         onChange={handleFileUpload}
       />
 
       {view === AppView.CAMERA && (
-        <CameraCapture 
-          onCapture={handleCameraCapture} 
-          onClose={() => setView(AppView.DEMOGRAPHICS)} 
+        <CameraCapture
+          onCapture={handleCameraCapture}
+          onClose={() => setView(AppView.DEMOGRAPHICS)}
           onUpload={triggerFileUpload}
         />
       )}
@@ -203,7 +208,7 @@ const App: React.FC = () => {
       {view === AppView.DEMOGRAPHICS && (
         <div className="min-h-screen flex flex-col max-w-md mx-auto bg-white p-6">
           <header className="flex justify-between items-center mb-4">
-             <button onClick={() => setView(AppView.LANDING)} className="text-slate-400">Back</button>
+            <button onClick={() => setView(AppView.LANDING)} className="text-slate-400">Back</button>
           </header>
           <DemographicsSelector onComplete={handleDemographicsComplete} initialData={demographics} />
         </div>
@@ -216,7 +221,7 @@ const App: React.FC = () => {
               <span className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white font-serif italic">K</span>
               {t.title}
             </div>
-            <button 
+            <button
               onClick={toggleLanguage}
               className="text-xs font-medium px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 flex items-center gap-1 transition-colors"
             >
@@ -252,7 +257,7 @@ const App: React.FC = () => {
               <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">{t.env}</label>
               <div className="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-200">
                 <MapPin size={18} className="text-rose-500" />
-                <select 
+                <select
                   className="bg-transparent w-full text-slate-800 text-sm font-medium focus:outline-none"
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
@@ -278,7 +283,7 @@ const App: React.FC = () => {
               </p>
             </div>
           </main>
-          
+
           {/* Background blobs */}
           <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-rose-100 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
           <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-blue-50 rounded-full blur-3xl opacity-50 pointer-events-none"></div>
@@ -296,7 +301,7 @@ const App: React.FC = () => {
             {t.analyzingDesc}
           </p>
           <div className="mt-8 w-64 h-1 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-rose-500 w-1/2 animate-[shimmer_1s_infinite_linear]" style={{width: '100%', transform: 'translateX(-100%)', animation: 'indeterminate 1.5s infinite linear'}}></div>
+            <div className="h-full bg-rose-500 w-1/2 animate-[shimmer_1s_infinite_linear]" style={{ width: '100%', transform: 'translateX(-100%)', animation: 'indeterminate 1.5s infinite linear' }}></div>
           </div>
           <style>{`
             @keyframes indeterminate {
@@ -326,13 +331,13 @@ const App: React.FC = () => {
             {/* Enhanced Summary Card */}
             <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl shadow-slate-900/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500 blur-[60px] opacity-30 rounded-full"></div>
-              
+
               <div className="relative z-10">
                 {/* Hero Stats */}
                 <div className="flex justify-between items-center mb-6">
                   <div>
-                     <div className="text-rose-300 font-medium text-xs tracking-wider uppercase mb-1">{t.skinScore}</div>
-                     <div className="text-5xl font-light tracking-tighter">{result.overallScore}</div>
+                    <div className="text-rose-300 font-medium text-xs tracking-wider uppercase mb-1">{t.skinScore}</div>
+                    <div className="text-5xl font-light tracking-tighter">{result.overallScore}</div>
                   </div>
                   <div className="text-right">
                     <div className="text-slate-400 font-medium text-xs tracking-wider uppercase mb-1">{t.skinAge}</div>
@@ -355,7 +360,7 @@ const App: React.FC = () => {
 
                 <div className="pt-4 border-t border-white/10">
                   <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs font-bold uppercase tracking-wide">
-                     <UserCheck size={14} /> Analysis for {demographics.gender}, {demographics.ageGroup}
+                    <UserCheck size={14} /> Analysis for {demographics.gender}, {demographics.ageGroup}
                   </div>
                   <p className="text-sm text-slate-300 leading-relaxed">
                     {result.analysisSummary}
@@ -387,14 +392,14 @@ const App: React.FC = () => {
             <div className="pt-4">
               <h3 className="text-xl font-bold text-slate-900 mb-2">{t.curated}</h3>
               <p className="text-sm text-slate-500 mb-4">{t.picksFor} {demographics.ageGroup} {demographics.gender}.</p>
-              
+
               <div className="space-y-4">
                 {result.products.map((product, idx) => (
-                  <ProductCard 
-                    key={idx} 
-                    product={product} 
-                    index={idx} 
-                    storeRegion={storeRegion} 
+                  <ProductCard
+                    key={idx}
+                    product={product}
+                    index={idx}
+                    storeRegion={storeRegion}
                     referralLink={REFERRAL_LINK}
                   />
                 ))}
@@ -425,14 +430,14 @@ const App: React.FC = () => {
               </div>
             )}
           </main>
-          
+
           {/* Sticky Bottom CTA */}
           <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t border-slate-100 z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
             {storeRegion === 'Global' && (
               <div className="absolute -top-10 left-0 right-0 flex justify-center pointer-events-none">
                 <div className="bg-amber-100 text-amber-800 text-[10px] font-bold px-4 py-1.5 rounded-t-xl shadow-sm border-t border-x border-amber-200 flex items-center gap-1">
-                   <Gift size={12} />
-                   <span>5-Step Bundle Savings: ${totals.savings}</span>
+                  <Gift size={12} />
+                  <span>5-Step Bundle Savings: ${totals.savings}</span>
                 </div>
               </div>
             )}
