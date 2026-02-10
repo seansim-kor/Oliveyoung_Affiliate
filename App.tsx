@@ -192,7 +192,9 @@ const App: React.FC = () => {
       if (err.message && err.message.includes("API Key")) {
         setError(`Environment Configuration Error: ${err.message}`);
       } else {
-        setError(t.error);
+        // Show the actual error message for debugging
+        setError(`Analysis Failed: ${err.message || JSON.stringify(err)}`);
+        console.error("Full Error Object:", err);
       }
       setView(AppView.LANDING);
     } finally {
