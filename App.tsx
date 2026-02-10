@@ -457,192 +457,192 @@ const App: React.FC = () => {
 
       {showLegal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setShowLegal(null)}>
-          <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
-            <h3 className="font-bold text-slate-800">
-              {showLegal === 'terms' ? (language === 'ko' ? '이용약관' : 'Terms of Service') : (language === 'ko' ? '개인정보처리방침' : 'Privacy Policy')}
-            </h3>
-            <button onClick={() => setShowLegal(null)} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-              <ChevronRight className="rotate-90" size={20} />
-            </button>
-          </div>
-          <div className="p-6 overflow-y-auto text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
-            {showLegal === 'terms' ? TERMS_TEXT[language].terms : TERMS_TEXT[language].privacy}
-          </div>
-          <div className="p-4 border-t border-slate-100">
-            <Button onClick={() => setShowLegal(null)} fullWidth variant="secondary">Close</Button>
+          <div className="bg-white rounded-2xl max-w-sm w-full max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+              <h3 className="font-bold text-slate-800">
+                {showLegal === 'terms' ? (language === 'ko' ? '이용약관' : 'Terms of Service') : (language === 'ko' ? '개인정보처리방침' : 'Privacy Policy')}
+              </h3>
+              <button onClick={() => setShowLegal(null)} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                <ChevronRight className="rotate-90" size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+              {showLegal === 'terms' ? TERMS_TEXT[language].terms : TERMS_TEXT[language].privacy}
+            </div>
+            <div className="p-4 border-t border-slate-100">
+              <Button onClick={() => setShowLegal(null)} fullWidth variant="secondary">Close</Button>
+            </div>
           </div>
         </div>
-        </div >
-      )
-      }
+      )}
 
-{
-  view === AppView.ANALYZING && (
-    <section className="min-h-screen flex flex-col items-center justify-center max-w-md mx-auto bg-white p-6 text-center relative overflow-hidden">
-      <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mb-6 relative">
-        <div className="absolute w-full h-full border-4 border-rose-100 rounded-full animate-ping opacity-25"></div>
-        <Sparkles className="text-rose-500 animate-pulse" size={32} />
-      </div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">{t.analyzing}</h2>
-      <p className="text-slate-500 max-w-xs mx-auto">
-        {t.analyzingDesc}
-      </p>
-      <div className="mt-8 w-64 h-1 bg-slate-100 rounded-full overflow-hidden">
-        <div className="h-full bg-rose-500 w-1/2 animate-[shimmer_1s_infinite_linear]" style={{ width: '100%', transform: 'translateX(-100%)', animation: 'indeterminate 1.5s infinite linear' }}></div>
-      </div>
-      <style>{`
+      {
+        view === AppView.ANALYZING && (
+          <section className="min-h-screen flex flex-col items-center justify-center max-w-md mx-auto bg-white p-6 text-center relative overflow-hidden">
+            <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mb-6 relative">
+              <div className="absolute w-full h-full border-4 border-rose-100 rounded-full animate-ping opacity-25"></div>
+              <Sparkles className="text-rose-500 animate-pulse" size={32} />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">{t.analyzing}</h2>
+            <p className="text-slate-500 max-w-xs mx-auto">
+              {t.analyzingDesc}
+            </p>
+            <div className="mt-8 w-64 h-1 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-full bg-rose-500 w-1/2 animate-[shimmer_1s_infinite_linear]" style={{ width: '100%', transform: 'translateX(-100%)', animation: 'indeterminate 1.5s infinite linear' }}></div>
+            </div>
+            <style>{`
             @keyframes indeterminate {
               0% { transform: translateX(-100%); }
               100% { transform: translateX(100%); }
             }
           `}</style>
-    </section>
-  )
-}
+          </section>
+        )
+      }
 
-{
-  view === AppView.RESULTS && result && (
-    <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-        <div className="font-bold text-lg text-slate-800">{t.report}</div>
-        <button onClick={resetApp} className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-slate-200 transition-colors">
-          <RefreshCw size={18} />
-        </button>
-      </div>
+      {
+        view === AppView.RESULTS && result && (
+          <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+              <div className="font-bold text-lg text-slate-800">{t.report}</div>
+              <button onClick={resetApp} className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-slate-200 transition-colors">
+                <RefreshCw size={18} />
+              </button>
+            </div>
 
-      <main className="flex-grow p-6 space-y-6 pb-32 overflow-y-auto">
-        {/* Analysis Overlay Image */}
-        {capturedImage && (
-          <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} />
-        )}
+            <main className="flex-grow p-6 space-y-6 pb-32 overflow-y-auto">
+              {/* Analysis Overlay Image */}
+              {capturedImage && (
+                <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} />
+              )}
 
-        {/* Enhanced Summary Card */}
-        <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl shadow-slate-900/10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500 blur-[60px] opacity-30 rounded-full"></div>
+              {/* Enhanced Summary Card */}
+              <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl shadow-slate-900/10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500 blur-[60px] opacity-30 rounded-full"></div>
 
-          <div className="relative z-10">
-            {/* Hero Stats */}
-            <div className="flex justify-between items-center mb-6">
-              <div>
-                <div className="text-rose-300 font-medium text-xs tracking-wider uppercase mb-1">{t.skinScore}</div>
-                <div className="text-5xl font-light tracking-tighter">{result.overallScore}</div>
-              </div>
-              <div className="text-right">
-                <div className="text-slate-400 font-medium text-xs tracking-wider uppercase mb-1">{t.skinAge}</div>
-                <div className="flex items-baseline justify-end gap-1">
-                  <span className="text-3xl font-bold">{result.estimatedAge}</span>
-                  <span className="text-sm text-slate-400">est.</span>
+                <div className="relative z-10">
+                  {/* Hero Stats */}
+                  <div className="flex justify-between items-center mb-6">
+                    <div>
+                      <div className="text-rose-300 font-medium text-xs tracking-wider uppercase mb-1">{t.skinScore}</div>
+                      <div className="text-5xl font-light tracking-tighter">{result.overallScore}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-slate-400 font-medium text-xs tracking-wider uppercase mb-1">{t.skinAge}</div>
+                      <div className="flex items-baseline justify-end gap-1">
+                        <span className="text-3xl font-bold">{result.estimatedAge}</span>
+                        <span className="text-sm text-slate-400">est.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-medium backdrop-blur-sm border border-white/10">
+                      {result.skinType}
+                    </span>
+                    <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-medium backdrop-blur-sm border border-white/10">
+                      {result.skinTone}
+                    </span>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/10">
+                    <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs font-bold uppercase tracking-wide">
+                      <UserCheck size={14} /> Analysis for {demographics.gender}, {demographics.ageGroup}
+                    </div>
+                    <p className="text-sm text-slate-300 leading-relaxed">
+                      {result.analysisSummary}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-medium backdrop-blur-sm border border-white/10">
-                {result.skinType}
-              </span>
-              <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-medium backdrop-blur-sm border border-white/10">
-                {result.skinTone}
-              </span>
-            </div>
+              {/* REWARD CARD HOOK (Golden Moment) */}
+              {storeRegion === 'Global' && (
+                <RewardCard referralLink={REFERRAL_LINK} />
+              )}
 
-            <div className="pt-4 border-t border-white/10">
-              <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs font-bold uppercase tracking-wide">
-                <UserCheck size={14} /> Analysis for {demographics.gender}, {demographics.ageGroup}
+              {/* Environmental Advice */}
+              <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 flex gap-4 items-start">
+                <div className="p-2 bg-white rounded-full text-blue-500 shadow-sm shrink-0">
+                  <MapPin size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm mb-1">{t.localTip}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">{result.weatherAdvice}</p>
+                </div>
               </div>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                {result.analysisSummary}
-              </p>
-            </div>
-          </div>
-        </div>
 
-        {/* REWARD CARD HOOK (Golden Moment) */}
-        {storeRegion === 'Global' && (
-          <RewardCard referralLink={REFERRAL_LINK} />
-        )}
+              {/* Chart */}
+              <SkinRadarChart metrics={result.metrics} />
 
-        {/* Environmental Advice */}
-        <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 flex gap-4 items-start">
-          <div className="p-2 bg-white rounded-full text-blue-500 shadow-sm shrink-0">
-            <MapPin size={20} />
-          </div>
-          <div>
-            <h3 className="font-bold text-slate-800 text-sm mb-1">{t.localTip}</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">{result.weatherAdvice}</p>
-          </div>
-        </div>
+              {/* Recommendations Header */}
+              <div className="pt-4">
+                <h3 className="text-xl font-bold text-slate-900 mb-2">{t.curated}</h3>
+                <p className="text-sm text-slate-500 mb-4">{t.picksFor} {demographics.ageGroup} {demographics.gender}.</p>
 
-        {/* Chart */}
-        <SkinRadarChart metrics={result.metrics} />
-
-        {/* Recommendations Header */}
-        <div className="pt-4">
-          <h3 className="text-xl font-bold text-slate-900 mb-2">{t.curated}</h3>
-          <p className="text-sm text-slate-500 mb-4">{t.picksFor} {demographics.ageGroup} {demographics.gender}.</p>
-
-          <div className="space-y-4">
-            {result.products.map((product, idx) => (
-              <ProductCard
-                key={idx}
-                product={product}
-                index={idx}
-                storeRegion={storeRegion}
-                referralLink={REFERRAL_LINK}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Total Routine Value Summary */}
-        {storeRegion === 'Global' && (
-          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 mt-6">
-            <h4 className="font-bold text-slate-900 mb-4 text-center">Complete Routine Value</h4>
-            <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-sm text-slate-500">
-                <span>5-Step Bundle Value</span>
-                <span className="line-through">${totals.original}</span>
+                <div className="space-y-4">
+                  {result.products.map((product, idx) => (
+                    <ProductCard
+                      key={idx}
+                      product={product}
+                      index={idx}
+                      storeRegion={storeRegion}
+                      referralLink={REFERRAL_LINK}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="flex justify-between text-sm font-bold text-rose-500">
-                <span>Member Savings (10% OFF)</span>
-                <span>-${totals.savings}</span>
-              </div>
-              <div className="border-t border-slate-200 my-2 pt-2 flex justify-between text-lg font-bold text-slate-900">
-                <span>You Pay</span>
-                <span>${totals.discounted}</span>
-              </div>
-            </div>
-            <div className="text-[10px] text-center text-slate-400">
-              *Prices are estimates based on Olive Young Global
-            </div>
-          </div>
-        )}
-      </main>
 
-      {/* Sticky Bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t border-slate-100 z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-        {storeRegion === 'Global' && (
-          <div className="absolute -top-10 left-0 right-0 flex justify-center pointer-events-none">
-            <div className="bg-amber-100 text-amber-800 text-[10px] font-bold px-4 py-1.5 rounded-t-xl shadow-sm border-t border-x border-amber-200 flex items-center gap-1">
-              <Gift size={12} />
-              <span>5-Step Bundle Savings: ${totals.savings}</span>
+              {/* Total Routine Value Summary */}
+              {storeRegion === 'Global' && (
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 mt-6">
+                  <h4 className="font-bold text-slate-900 mb-4 text-center">Complete Routine Value</h4>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm text-slate-500">
+                      <span>5-Step Bundle Value</span>
+                      <span className="line-through">${totals.original}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold text-rose-500">
+                      <span>Member Savings (10% OFF)</span>
+                      <span>-${totals.savings}</span>
+                    </div>
+                    <div className="border-t border-slate-200 my-2 pt-2 flex justify-between text-lg font-bold text-slate-900">
+                      <span>You Pay</span>
+                      <span>${totals.discounted}</span>
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-center text-slate-400">
+                    *Prices are estimates based on Olive Young Global
+                  </div>
+                </div>
+              )}
+            </main>
+
+            {/* Sticky Bottom CTA */}
+            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t border-slate-100 z-30 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
+              {storeRegion === 'Global' && (
+                <div className="absolute -top-10 left-0 right-0 flex justify-center pointer-events-none">
+                  <div className="bg-amber-100 text-amber-800 text-[10px] font-bold px-4 py-1.5 rounded-t-xl shadow-sm border-t border-x border-amber-200 flex items-center gap-1">
+                    <Gift size={12} />
+                    <span>5-Step Bundle Savings: ${totals.savings}</span>
+                  </div>
+                </div>
+              )}
+              <Button onClick={handleStickyBuy} fullWidth variant="secondary" className="flex justify-between">
+                <span className="flex items-center gap-2">
+                  <ShoppingBag size={18} />
+                  {storeRegion === 'Global' ? `Buy All 5 Items ($${totals.discounted})` : t.shop}
+                </span>
+                <div className="flex items-center gap-1 opacity-90">
+                  <ChevronRight size={18} />
+                </div>
+              </Button>
             </div>
-          </div>
-        )}
-        <Button onClick={handleStickyBuy} fullWidth variant="secondary" className="flex justify-between">
-          <span className="flex items-center gap-2">
-            <ShoppingBag size={18} />
-            {storeRegion === 'Global' ? `Buy All 5 Items ($${totals.discounted})` : t.shop}
-          </span>
-          <div className="flex items-center gap-1 opacity-90">
-            <ChevronRight size={18} />
-          </div>
-        </Button>
-      </div>
-    </article>
-  )
-}
+          </article>
+        )
+      }
     </>
   );
 };
