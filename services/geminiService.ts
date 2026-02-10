@@ -86,17 +86,19 @@ export const analyzeSkin = async (
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-1.5-flash',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: imageFile.type,
-              data: base64Data
-            }
-          },
-          { text: prompt }
-        ]
-      },
+      contents: [
+        {
+          parts: [
+            {
+              inlineData: {
+                mimeType: imageFile.type,
+                data: base64Data
+              }
+            },
+            { text: prompt }
+          ]
+        }
+      ],
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -157,7 +159,8 @@ export const analyzeSkin = async (
     if (response.text) {
       return JSON.parse(response.text) as AnalysisResult;
     } else {
-      throw new Error("No response text received from Gemini.");
+      console.error("Gemini Response Missing Text:", response);
+      throw new Error(`No response text received from Gemini. Prompt Feedback: ${JSON.stringify(response.promptFeedback)}`);
     }
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
