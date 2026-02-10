@@ -155,6 +155,16 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // Redirect if Results view has no data
+  useEffect(() => {
+    if (view === AppView.RESULTS && !result) {
+      const timer = setTimeout(() => {
+        setView(AppView.LANDING);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [view, result]);
+
   const handleStartFlow = () => {
     setView(AppView.DEMOGRAPHICS);
   };
@@ -506,7 +516,6 @@ const App: React.FC = () => {
             <div className="text-center">
               <AlertCircle size={48} className="mx-auto text-rose-500 mb-4" />
               <p className="text-slate-500">Analysis data missing. Returning to home...</p>
-              {setTimeout(() => setView(AppView.LANDING), 2000) && null}
             </div>
           </div>
         )
