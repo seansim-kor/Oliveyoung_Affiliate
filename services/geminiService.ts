@@ -84,8 +84,10 @@ export const analyzeSkin = async (
   `;
 
   try {
+    // Use Gemini 2.0 Flash as requested for better performance/latest features.
+    // If this fails, we can fall back to 'gemini-1.5-flash' or 'gemini-1.5-flash-001'.
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash-001',
+      model: 'gemini-2.0-flash',
       contents: [
         {
           parts: [
