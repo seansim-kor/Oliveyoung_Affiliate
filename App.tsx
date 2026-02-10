@@ -501,7 +501,19 @@ const App: React.FC = () => {
       }
 
       {
-        view === AppView.RESULTS && result && (
+        view === AppView.RESULTS && !result && (
+          <div className="flex h-screen items-center justify-center bg-white">
+            <div className="text-center">
+              <AlertCircle size={48} className="mx-auto text-rose-500 mb-4" />
+              <p className="text-slate-500">Analysis data missing. Returning to home...</p>
+              {setTimeout(() => setView(AppView.LANDING), 2000) && null}
+            </div>
+          </div>
+        )
+      }
+
+      {
+        view === AppView.RESULTS && result && demographics && (
           <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50">
             {/* Sticky Header */}
             <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
