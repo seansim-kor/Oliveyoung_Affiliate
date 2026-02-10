@@ -9,6 +9,7 @@ import { CameraCapture } from './components/CameraCapture';
 import { AnalysisOverlay } from './components/AnalysisOverlay';
 import { DemographicsSelector } from './components/DemographicsSelector';
 import { RewardCard } from './components/RewardCard';
+import { TERMS_TEXT } from './content/legal';
 
 const REFERRAL_LINK = "https://global.oliveyoung.com/member/join?reco_id=71161220260209121639";
 
@@ -44,10 +45,23 @@ const TEXTS = {
     howStep2: "2. Environmental Sync: We fetch real-time weather and air quality data for your location.",
     howStep3: "3. Curated Match: We match your unique profile with top-rated, proven K-Beauty products.",
     faqTitle: "Frequently Asked Questions",
-    faqQ1: "Is my photo stored?",
     faqA1: "No, your photo is processed in real-time and immediately deleted.",
     faqQ2: "Are the products sponsored?",
-    faqA2: "Our AI prioritizes efficacy and user reviews from Olive Young's vast database."
+    faqA2: "Our AI prioritizes efficacy and user reviews from Olive Young's vast database.",
+
+    // Magazine Content
+    magTitle: "K-Beauty Trends 2025",
+    mag1Title: "Skip-Care: Less is More",
+    mag1Desc: "The 'Skip-Care' movement is all about identifying the essential ingredients your skin needs and avoiding unnecessary steps. Our AI helps you find that perfect balance.",
+    mag2Title: "Skin Barrier First",
+    mag2Desc: "A healthy skin barrier is the key to glowing skin. Look for Ceramide and Panthenol in your routine to lock in moisture and keep irritants out.",
+
+    // Ingredient Dictionary
+    dictTitle: "Ingredient Dictionary",
+    dict1Title: "Cica (Centella Asiatica)",
+    dict1Desc: "The holy grail for sensitive skin. Known for its powerful soothing and healing properties.",
+    dict2Title: "Niacinamide",
+    dict2Desc: "A multitasking vitamin that brightens skin tone, treats acne, and strengthens the skin barrier."
   },
   ko: {
     title: "K-뷰티 미러",
@@ -83,7 +97,21 @@ const TEXTS = {
     faqQ1: "내 사진이 저장되나요?",
     faqA1: "아니요, 사진은 실시간 분석 후 즉시 파기되어 안전합니다.",
     faqQ2: "추천 제품은 광고인가요?",
-    faqA2: "아니요, AI는 오직 성분과 올리브영의 실제 사용자 리뷰를 기준으로 추천합니다."
+    faqA2: "아니요, AI는 오직 성분과 올리브영의 실제 사용자 리뷰를 기준으로 추천합니다.",
+
+    // Magazine Content
+    magTitle: "2025 K-뷰티 트렌드 리포트",
+    mag1Title: "스킵케어(Skip-Care): 더 적게, 더 좋게",
+    mag1Desc: "불필요한 단계를 줄이고 내 피부에 꼭 필요한 성분만 채우는 '스킵케어'가 대세입니다. AI 진단으로 화장품 다이어트를 시작하세요.",
+    mag2Title: "피부 장벽(Skin Barrier) 사수하기",
+    mag2Desc: "건강한 피부의 기초는 튼튼한 장벽입니다. 세라마이드와 판테놀 성분으로 수분은 가두고 자극은 막아내세요.",
+
+    // Ingredient Dictionary
+    dictTitle: "성분 시크릿 노트",
+    dict1Title: "시카(Cica) - 병풀 추출물",
+    dict1Desc: "민감성 피부의 구세주. 호랑이풀로도 불리며, 자극받은 피부를 빠르게 진정시키고 재생을 돕습니다.",
+    dict2Title: "나이아신아마이드",
+    dict2Desc: "미백과 트러블 케어를 동시에 잡는 비타민 성분. 칙칙한 피부톤을 밝히고 모공을 탄탄하게 관리합니다."
   }
 };
 
@@ -100,6 +128,9 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Legal Modal
+  const [showLegal, setShowLegal] = useState<'terms' | 'privacy' | null>(null);
 
   const t = TEXTS[language];
 
@@ -366,8 +397,74 @@ const App: React.FC = () => {
                 </div>
               </div>
             </section>
+
+            {/* Beauty Magazine Section */}
+            <section>
+              <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <ShoppingBag size={20} className="text-rose-500" />
+                {t.magTitle}
+              </h2>
+              <div className="space-y-6">
+                <article className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                  <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider mb-2 block">Trend</span>
+                  <h3 className="font-bold text-slate-800 mb-2">{t.mag1Title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{t.mag1Desc}</p>
+                </article>
+                <article className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm">
+                  <span className="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-2 block">Tip</span>
+                  <h3 className="font-bold text-slate-800 mb-2">{t.mag2Title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{t.mag2Desc}</p>
+                </article>
+              </div>
+            </section>
+
+            {/* Ingredient Dictionary Section */}
+            <section className="bg-slate-900 text-white p-6 rounded-3xl">
+              <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                <Sparkles size={20} className="text-amber-400" />
+                {t.dictTitle}
+              </h2>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-bold text-rose-300 mb-1">{t.dict1Title}</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">{t.dict1Desc}</p>
+                </div>
+                <div className="pt-4 border-t border-slate-700">
+                  <h3 className="font-bold text-blue-300 mb-1">{t.dict2Title}</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">{t.dict2Desc}</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Legal Footer Links */}
+            <div className="flex justify-center gap-4 text-[10px] text-slate-400 mt-8 pb-4">
+              <button onClick={() => setShowLegal('terms')} className="hover:text-slate-600 underline">Terms of Service</button>
+              <button onClick={() => setShowLegal('privacy')} className="hover:text-slate-600 underline">Privacy Policy</button>
+            </div>
           </div>
         </article>
+      )}
+
+      {/* Legal Modal Overlay */}
+      {showLegal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setShowLegal(null)}>
+          <div className="bg-white rounded-2xl max-w-sm w-full max-h-[80vh] flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+              <h3 className="font-bold text-slate-800">
+                {showLegal === 'terms' ? (language === 'ko' ? '이용약관' : 'Terms of Service') : (language === 'ko' ? '개인정보처리방침' : 'Privacy Policy')}
+              </h3>
+              <button onClick={() => setShowLegal(null)} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                <ChevronRight className="rotate-90" size={20} />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+              {showLegal === 'terms' ? TERMS_TEXT[language].terms : TERMS_TEXT[language].privacy}
+            </div>
+            <div className="p-4 border-t border-slate-100">
+              <Button onClick={() => setShowLegal(null)} fullWidth variant="secondary">Close</Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {view === AppView.ANALYZING && (
