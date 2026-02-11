@@ -122,7 +122,24 @@ export const analyzeSkin = async (
         if (response.candidates?.[0]?.finishReason === "SAFETY") throw new Error("SAFETY_BLOCK");
         throw new Error("Empty AI response.");
       }
-      return JSON.parse(text) as AnalysisResult;
+
+      try {
+        // Strip markdown if present (some newer models do this even with responseMimeType)
+        const cleanJson = text.replace(/```json\n?|```/g, '').trim();
+        const parsed = JSON.parse(cleanJson) as AnalysisResult;
+
+        // Basic validation to ensure critical fields exist
+        if (!parsed.products) parsed.products = [];
+        if (!parsed.issues) parsed.issues = [];
+        if (!parsed.metrics) {
+          parsed.metrics = { hydration: 50, oiliness: 50, sensitivity: 50, pigmentation: 50, wrinkles: 50 };
+        }
+
+        return parsed;
+      } catch (parseError) {
+        console.error("JSON Parse Error:", text);
+        throw new Error("Invalid AI response format.");
+      }
     } catch (error: any) {
       console.error(`Gemini Attempt ${retries + 1}:`, error);
 

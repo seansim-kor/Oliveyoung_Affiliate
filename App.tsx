@@ -476,12 +476,12 @@ const App: React.FC = () => {
                 <div className="flex justify-between items-center mb-6">
                   <div>
                     <div className="text-rose-300 font-medium text-xs tracking-wider uppercase mb-1">{t.skinScore}</div>
-                    <div className="text-5xl font-light tracking-tighter">{result.overallScore}</div>
+                    <div className="text-5xl font-light tracking-tighter">{String(result.overallScore || 0)}</div>
                   </div>
                   <div className="text-right">
                     <div className="text-slate-400 font-medium text-xs tracking-wider uppercase mb-1">{t.skinAge}</div>
                     <div className="flex items-baseline justify-end gap-1">
-                      <span className="text-3xl font-bold">{result.estimatedAge}</span>
+                      <span className="text-3xl font-bold">{String(result.estimatedAge || 0)}</span>
                       <span className="text-sm text-slate-400">est.</span>
                     </div>
                   </div>
