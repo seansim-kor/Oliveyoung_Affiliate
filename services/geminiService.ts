@@ -44,25 +44,21 @@ export const analyzeSkin = async (
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
     SPATIAL REASONING PROTOCOL:
-    1. PRIMARY FACE LOCALIZATION:
-       - First, identify the BOUNDING BOX of the face: [ymin, xmin, ymax, xmax] (0-1000).
-       - All subsequent skin markers MUST be mathematically centered within this face box.
+    1. PRIMARY FACE LOCALIZATION (MANDATORY):
+       - You MUST provide a 'face_box': [ymin, xmin, ymax, xmax] (0-1000) that tightly contains the face.
+       - This will be used to CROP the background out. Be precise.
     
     2. ANATOMICAL PINPOINTING (REQUIRED: 4 MARKERS):
-       - 'Center Forehead': Target the glabella/frontal area. (Avoid the hairline!)
-       - 'Left/Right Zygomatic': Target the peak of each cheekbone on the actual skin.
-       - 'Mentalis/Chin': Target the center of the chin.
-       - 'T-Zone': Target the nasal bridge and immediate surrounding area.
+       - All skin markers MUST be mathematically located WITHIN the 'face_box'.
+       - 'Center Forehead', 'Left/Right Zygomatic', 'Mentalis/Chin', 'T-Zone'.
     
     3. CLINICAL COORDINATES: 
-       - For EACH marker, provide a tiny, precise [ymin, xmin, ymax, xmax] box (e.g., a 40x40 unit square).
-       - Coordinates must be relative to the 0-1000 scale of the ORIGINAL IMAGE.
+       - For EACH marker, provide a tiny [ymin, xmin, ymax, xmax] box (0-1000 scale) relative to the original image.
     
     4. STRICT FILTER: Zero tolerance for markers on hair, ears, eyes, or background.
-    
     5. PROFESSIONAL SUMMARY: 4+ sentences of objective clinical findings.
     
-    Return pure JSON with surgically accurate bounding boxes.
+    Return pure JSON with surgically accurate bounding boxes and the face_box.
   `;
 
   const model = genAI.getGenerativeModel({
@@ -71,7 +67,7 @@ export const analyzeSkin = async (
       responseMimeType: "application/json",
       responseSchema: {
         type: SchemaType.OBJECT,
-        required: ["skinType", "skinTone", "sensitivityLevel", "overallScore", "estimatedAge", "analysisSummary", "weatherAdvice", "metrics", "issues", "products"],
+        required: ["skinType", "skinTone", "sensitivityLevel", "overallScore", "estimatedAge", "analysisSummary", "weatherAdvice", "metrics", "issues", "products", "faceBox"],
         properties: {
           skinType: { type: SchemaType.STRING },
           skinTone: { type: SchemaType.STRING },
@@ -80,6 +76,11 @@ export const analyzeSkin = async (
           estimatedAge: { type: SchemaType.NUMBER },
           analysisSummary: { type: SchemaType.STRING },
           weatherAdvice: { type: SchemaType.STRING },
+          faceBox: {
+            type: SchemaType.ARRAY,
+            items: { type: SchemaType.NUMBER },
+            description: "[ymin, xmin, ymax, xmax]"
+          },
           metrics: {
             type: SchemaType.OBJECT,
             properties: {
@@ -191,6 +192,11 @@ export const analyzeSkin = async (
             }
             return issue;
           });
+        }
+
+        if (!parsed.faceBox || !Array.isArray(parsed.faceBox) || parsed.faceBox.length !== 4) {
+          // Default to a generous center crop if detection fails
+          parsed.faceBox = [100, 200, 850, 800];
         }
 
         if (!parsed.metrics) {

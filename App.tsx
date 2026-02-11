@@ -464,7 +464,7 @@ const App: React.FC = () => {
           <main className="flex-grow p-6 space-y-6 pb-32 overflow-y-auto">
             {/* Analysis Overlay Image */}
             {capturedImage && (
-              <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} />
+              <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} faceBox={result.faceBox} />
             )}
 
             {/* Enhanced Summary Card */}

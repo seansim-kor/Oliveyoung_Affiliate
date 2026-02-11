@@ -15,7 +15,7 @@ export interface Product {
   brand: string;
   keyIngredient: string; // New field
   reason: string;
-  priceUsd: number; 
+  priceUsd: number;
 }
 
 export interface SkinMetrics {
@@ -43,6 +43,7 @@ export interface AnalysisResult {
   metrics: SkinMetrics;
   products: Product[];
   issues: Issue[];
+  faceBox?: number[]; // [ymin, xmin, ymax, xmax] 0-1000
 }
 
 export enum AppView {
