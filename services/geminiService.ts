@@ -1,16 +1,20 @@
 /// <reference types="vite/client" />
-import { GoogleGenAI, Type, HarmCategory, HarmBlockThreshold } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { AnalysisResult, Language, UserDemographics } from "../types";
 
-// Helper to convert File to Base64
-export const fileToGenerativePart = async (file: File): Promise<string> => {
+// Helper to convert File to Generative Part (Base64)
+export const fileToGenerativePart = async (file: File): Promise<{ inlineData: { data: string; mimeType: string } }> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
-      // Remove data url prefix (e.g. "data:image/jpeg;base64,")
       const base64Data = base64String.split(',')[1];
-      resolve(base64Data);
+      resolve({
+        inlineData: {
+          data: base64Data,
+          mimeType: file.type,
+        },
+      });
     };
     reader.onerror = reject;
     reader.readAsDataURL(file);
@@ -27,192 +31,118 @@ export const analyzeSkin = async (
     (typeof import.meta.env !== 'undefined' && import.meta.env.VITE_GEMINI_API_KEY);
 
   if (!apiKey) {
-    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in Cloudflare Pages settings (Production & Preview).");
+    throw new Error("API Key is missing. Please set VITE_GEMINI_API_KEY in Cloudflare Pages settings.");
   }
 
-  const ai = new GoogleGenAI({ apiKey });
-  const base64Data = await fileToGenerativePart(imageFile);
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const imagePart = await fileToGenerativePart(imageFile);
 
   const langInstruction = language === 'ko' ? "Respond entirely in Korean." : "Respond in English.";
 
   const prompt = `
-    You are a professional K-Beauty consultant and dermatologist. 
-    Analyze the selfie image provided. ${langInstruction}
-
-    USER PROFILE:
-    - Gender: ${demographics.gender}
-    - Age Group: ${demographics.ageGroup}
-    - Location/Climate: ${locationName}
-
-    Your analysis must be WEIGHTED by this profile. 
-    (e.g., Wrinkles in 20s is a high concern, wrinkles in 60s is normal. A score of 80/100 for a 60-year-old is different than for a 20-year-old.)
-
-    Focus on:
-    1. Skin Type (Oily, Dry, Combination, Normal)
-    2. Skin Tone (Cool, Warm, Neutral, Fitzpatrick scale)
-    3. Estimated Skin Age (Compare visually estimated age vs actual age group).
-    
-    Calculate an 'overallScore' (0-100) representing the overall health.
-    Calculate 'estimatedAge' (integer) based on skin condition.
-
-    Recommend a **Complete 5-Step Korean Skincare Routine** tailored to the user's specific skin issues (e.g., dark circles, pores, wrinkles) and environment.
-    
-    CRITICAL: Only recommend products from highly popular, widely available K-Beauty brands that are easily searchable on Olive Young (Global/Korea). 
-    Preferred brands: Anua, Round Lab, COSRX, Beauty of Joseon, Torriden, Manyo Factory, Mediheal, Skin1004, Isntree, Aestura, Laneige.
-
-    The 5 Steps MUST be:
-    1. **Prep**: Toner or Pad (Refine texture)
-    2. **Target**: Ampoule or Serum (High-concentration treatment)
-    3. **Seal**: Moisturizer or Cream (Lock moisture)
-    4. **Protect**: Sunscreen (UV Protection)
-    5. **Enhance**: Eye Cream, Special Care, or Tone-up (Specific concern focus)
-
-    For EACH product in the 5 steps:
-    - Provide specific Product Name and Brand. 
-    - IMPORTANT: keep the 'name' concise (remove extra fluff like 'special edition', 'renewed', or long descriptions) to ensure high search hit rate.
-    - Identify the 'keyIngredient' (e.g., Centella Asiatica, Retinol, Hyaluronic Acid).
-    - Explain 'reason' tailored to the user's age/gender.
-    - Provide an estimated 'priceUsd' (integer).
-
-    IMPORTANT - VISUAL ISSUES & BOUNDING BOXES:
-    Identify up to 4 specific visible skin issues.
-    - Bounding boxes must be TIGHT and PRECISE.
-    - Dark Circles: Enclose ONLY the under-eye area.
-    - Acne/Redness: Box specific spots.
-    
-    Return pure JSON.
+    Analyze this skin image. ${langInstruction}
+    USER: ${demographics.gender}, ${demographics.ageGroup} at ${locationName}.
+    Weighted analysis: Score 0-100, estimatedAge (integer).
+    Provide a 5-Step K-Beauty routine with brands like Anua, Round Lab, COSRX, Beauty of Joseon.
+    Bounding boxes for issues: [ymin, xmin, ymax, xmax] 0-1000.
+    Return pure JSON matching the schema.
   `;
 
-  // Helper for actual model call to allow retries
-  const runAnalysisWithRetry = async (retryCount = 0): Promise<AnalysisResult> => {
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: {
-          parts: [
-            {
-              inlineData: {
-                mimeType: imageFile.type,
-                data: base64Data
-              }
-            },
-            { text: prompt }
-          ]
-        },
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash-latest",
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: SchemaType.OBJECT,
+        properties: {
+          skinType: { type: SchemaType.STRING },
+          skinTone: { type: SchemaType.STRING },
+          sensitivityLevel: { type: SchemaType.STRING },
+          overallScore: { type: SchemaType.NUMBER },
+          estimatedAge: { type: SchemaType.NUMBER },
+          analysisSummary: { type: SchemaType.STRING },
+          weatherAdvice: { type: SchemaType.STRING },
+          metrics: {
+            type: SchemaType.OBJECT,
             properties: {
-              skinType: { type: Type.STRING },
-              skinTone: { type: Type.STRING },
-              sensitivityLevel: { type: Type.STRING },
-              overallScore: { type: Type.INTEGER },
-              estimatedAge: { type: Type.INTEGER },
-              analysisSummary: { type: Type.STRING },
-              weatherAdvice: { type: Type.STRING },
-              metrics: {
-                type: Type.OBJECT,
-                properties: {
-                  hydration: { type: Type.INTEGER },
-                  oiliness: { type: Type.INTEGER },
-                  sensitivity: { type: Type.INTEGER },
-                  pigmentation: { type: Type.INTEGER },
-                  wrinkles: { type: Type.INTEGER },
-                }
-              },
-              issues: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    label: { type: Type.STRING },
-                    description: { type: Type.STRING },
-                    box_2d: {
-                      type: Type.ARRAY,
-                      items: { type: Type.INTEGER },
-                      description: "Bounding box [ymin, xmin, ymax, xmax] 0-1000"
-                    }
-                  }
-                }
-              },
-              products: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    step: { type: Type.STRING },
-                    category: { type: Type.STRING },
-                    name: { type: Type.STRING },
-                    brand: { type: Type.STRING },
-                    keyIngredient: { type: Type.STRING },
-                    reason: { type: Type.STRING },
-                    priceUsd: { type: Type.INTEGER },
-                  }
+              hydration: { type: SchemaType.NUMBER },
+              oiliness: { type: SchemaType.NUMBER },
+              sensitivity: { type: SchemaType.NUMBER },
+              pigmentation: { type: SchemaType.NUMBER },
+              wrinkles: { type: SchemaType.NUMBER },
+            }
+          },
+          issues: {
+            type: SchemaType.ARRAY,
+            items: {
+              type: SchemaType.OBJECT,
+              properties: {
+                label: { type: SchemaType.STRING },
+                description: { type: SchemaType.STRING },
+                box_2d: {
+                  type: SchemaType.ARRAY,
+                  items: { type: SchemaType.NUMBER }
                 }
               }
             }
           },
-          // Relax safety settings for skin analysis (often flagged erroneously as medical or nudity)
-          safetySettings: [
-            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
-          ]
+          products: {
+            type: SchemaType.ARRAY,
+            items: {
+              type: SchemaType.OBJECT,
+              properties: {
+                step: { type: SchemaType.STRING },
+                category: { type: SchemaType.STRING },
+                name: { type: SchemaType.STRING },
+                brand: { type: SchemaType.STRING },
+                keyIngredient: { type: SchemaType.STRING },
+                reason: { type: SchemaType.STRING },
+                priceUsd: { type: SchemaType.NUMBER }
+              }
+            }
+          }
         }
-      });
-
-      if (response.text) {
-        return JSON.parse(response.text) as AnalysisResult;
-      } else {
-        // Check if blocked by safety
-        const finishReason = response.candidates?.[0]?.finishReason;
-        if (finishReason === "SAFETY") {
-          throw new Error("SAFETY_BLOCK");
-        }
-        throw new Error(`Analysis failed (Reason: ${finishReason || 'Unknown'}). Please try a different photo.`);
       }
+    },
+    safetySettings: [
+      { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+    ]
+  });
+
+  const runWithRetry = async (retries = 0): Promise<AnalysisResult> => {
+    try {
+      const result = await model.generateContent([prompt, imagePart]);
+      const response = await result.response;
+      const text = response.text();
+
+      if (!text) {
+        if (response.candidates?.[0]?.finishReason === "SAFETY") throw new Error("SAFETY_BLOCK");
+        throw new Error("Empty AI response.");
+      }
+      return JSON.parse(text) as AnalysisResult;
     } catch (error: any) {
-      console.error(`Attempt ${retryCount + 1} Error:`, error);
+      console.error(`Gemini Attempt ${retries + 1}:`, error);
 
-      const isRetryable = error.message?.includes("503") ||
-        error.message?.includes("UNAVAILABLE") ||
-        error.message?.includes("429") ||
-        error.message?.includes("RESOURCE_EXHAUSTED");
-
-      if (isRetryable && retryCount < 2) {
-        // Wait for exponential backoff (1s, 2s)
-        const delay = Math.pow(2, retryCount) * 1000;
-        await new Promise(resolve => setTimeout(resolve, delay));
-        return runAnalysisWithRetry(retryCount + 1);
-      }
-
-      // Final failure handling
-      if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
-        const busyMsg = language === 'ko'
-          ? "구글 서버가 현재 매우 바쁩니다. 약 1분 후 다시 시도해 주세요."
-          : "Google server is currently busy. Please try again in 1 minute.";
-        throw new Error(busyMsg);
-      }
-
-      if (error.message?.includes("429") || error.message?.includes("RESOURCE_EXHAUSTED")) {
-        const quotaMsg = language === 'ko'
-          ? "AI 분석 사용량이 일시적으로 초과되었습니다. 잠시 후 다시 시도해 보세요."
-          : "AI Quota exceeded temporarily. Please try again in a few moments.";
-        throw new Error(quotaMsg);
+      const isRetryable = error.message?.includes("503") || error.message?.includes("429");
+      if (isRetryable && retries < 2) {
+        await new Promise(r => setTimeout(r, Math.pow(2, retries) * 1000));
+        return runWithRetry(retries + 1);
       }
 
       if (error.message === "SAFETY_BLOCK") {
-        const safetyMsg = language === 'ko'
-          ? "AI가 사진에서 피부 상태를 확인하지 못했습니다. 더 선명한 얼굴 사진을 사용해 주세요."
-          : "AI couldn't detect skin profile. Please use a clearer face photo.";
-        throw new Error(safetyMsg);
+        throw new Error(language === 'ko' ? "AI가 피부를 찾지 못했습니다. 더 밝은 곳에서 찍어주세요." : "AI couldn't detect skin. Try a brighter photo.");
+      }
+
+      if (error.message?.includes("429")) {
+        throw new Error(language === 'ko' ? "사용량이 많습니다. 1분 후 시도해주세요." : "Quota exceeded. Try in 1 minute.");
       }
 
       throw error;
     }
   };
 
-  return runAnalysisWithRetry();
+  return runWithRetry();
 };
