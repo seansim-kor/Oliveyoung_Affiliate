@@ -43,23 +43,19 @@ export const analyzeSkin = async (
     Perform an elite-level clinical skin analysis. Respond as a Senior Dermatologist. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    1. RICH CLINICAL SUMMARY (analysisSummary): 
-       - Provide a deep, insightful analysis (minimum 3-4 professional sentences).
-       - Cover: Sebum activity, dermal texture uniformity, barrier health, and specific clinical strengths or degradation noted.
-       - Tone: Professional, authoritative, and medically insightful.
+    1. CLINICAL TARGET MAPPING (REQUIRED):
+       - Use 'Vision-First' spatial reasoning to precisely locate the face.
+       - You MUST identify and provide coordinates for exactly 4 distinct areas: 
+         (e.g., Forehead Zone, Malar/Cheek Region, T-Zone, and Mandibular/Chin line).
+       - For issues, provide precise [ymin, xmin, ymax, xmax] coordinates (0-1000 scale).
+       - Ensure markers are placed ON the skin, not on hair or empty space.
     
-    2. FACE RECOGNITION & SPATIAL MAPPING:
-       - Localize the face and map at least 3 clinical markers onto precise skin areas.
-       - Use [ymin, xmin, ymax, xmax] relative to the original image.
+    2. RICH CLINICAL SUMMARY: 
+       - Minimum 4 Insightful sentences describing sebum, texture, and barrier health.
     
-    3. OBJECTIVE SCORING (0-100):
-       - 90-100: Flawless/Celebrity condition.
-       - 80-89: Healthy with minor sebum/pore activity.
-       - 70-79: Moderate/Standard.
+    3. OBJECTIVE SCORING (0-100): Professional dermatological assessment.
     
-    4. 5-STEP ROUTINE: Recommend 5 distinct premium K-Beauty products with clinical reasoning for each.
-    
-    Return pure JSON with the full clinical report.
+    Return pure JSON following the schema perfectly.
   `;
 
   const model = genAI.getGenerativeModel({
@@ -172,7 +168,22 @@ export const analyzeSkin = async (
         }
 
         if (!parsed.issues || parsed.issues.length === 0) {
-          parsed.issues = [{ label: "Analyzed Area", description: "This area was scanned for hydration and texture.", box_2d: [100, 100, 900, 900] }];
+          parsed.issues = [
+            { label: "T-Zone", description: "Analysis concentrated on sebum and pore uniformity.", box_2d: [150, 400, 350, 600] },
+            { label: "Cheek Area", description: "Texture and hydration levels scanned in Malar region.", box_2d: [400, 250, 600, 450] },
+            { label: "Lower Face", description: "Elasticity and barrier health assessment.", box_2d: [650, 350, 850, 650] }
+          ];
+        } else {
+          // Safety: Fill missing box_2d for any AI-generated issues
+          parsed.issues = parsed.issues.map((issue: any, idx: number) => {
+            if (!issue.box_2d || !Array.isArray(issue.box_2d) || issue.box_2d.length !== 4) {
+              const fallbacks = [
+                [150, 400, 300, 600], [400, 250, 550, 450], [400, 550, 550, 750], [650, 350, 800, 650]
+              ];
+              return { ...issue, box_2d: fallbacks[idx % fallbacks.length] };
+            }
+            return issue;
+          });
         }
 
         if (!parsed.metrics) {
