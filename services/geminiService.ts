@@ -124,11 +124,18 @@ export const analyzeSkin = async (
       }
 
       try {
-        // Strip markdown if present (some newer models do this even with responseMimeType)
-        const cleanJson = text.replace(/```json\n?|```/g, '').trim();
+        // More robust JSON extraction: find the first '{' and last '}'
+        const firstBrace = text.indexOf('{');
+        const lastBrace = text.lastIndexOf('}');
+
+        if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
+          throw new Error("No JSON object found in response");
+        }
+
+        const cleanJson = text.substring(firstBrace, lastBrace + 1);
         const parsed = JSON.parse(cleanJson) as AnalysisResult;
 
-        // Basic validation to ensure critical fields exist
+        // Basic validation and field filling
         if (!parsed.products) parsed.products = [];
         if (!parsed.issues) parsed.issues = [];
         if (!parsed.metrics) {
@@ -136,9 +143,10 @@ export const analyzeSkin = async (
         }
 
         return parsed;
-      } catch (parseError) {
-        console.error("JSON Parse Error:", text);
-        throw new Error("Invalid AI response format.");
+      } catch (parseError: any) {
+        console.error("JSON Parse Error. Raw Text:", text);
+        console.error("Parse Error Details:", parseError.message);
+        throw new Error(`AI 분석 형식이 올바르지 않습니다. 다시 시도해 주세요. (${parseError.message})`);
       }
     } catch (error: any) {
       console.error(`Gemini Attempt ${retries + 1}:`, error);
