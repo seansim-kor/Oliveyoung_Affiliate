@@ -290,11 +290,15 @@ const App: React.FC = () => {
             <div className="relative mb-10 mt-4 group">
               <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-1 ring-white/20">
                 <img
-                  src="https://images.unsplash.com/photo-1552662813-b5f3b7789bb0?q=80&w=800&auto=format&fit=crop"
-                  alt="K-Beauty Skin Analysis"
-                  className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-[3s]"
+                  src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop"
+                  alt="K-Beauty Analysis"
+                  className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] bg-slate-900"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?q=80&w=800&auto=format&fit=crop";
+                  }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
 
                 {/* Floating Insight Cards */}
                 <div className="absolute top-6 left-6 animate-float" style={{ animationDelay: '0s' }}>
