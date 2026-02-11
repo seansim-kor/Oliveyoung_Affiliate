@@ -83,84 +83,117 @@ export const analyzeSkin = async (
     Return pure JSON.
   `;
 
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: imageFile.type,
-              data: base64Data
-            }
-          },
-          { text: prompt }
-        ]
-      },
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            skinType: { type: Type.STRING },
-            skinTone: { type: Type.STRING },
-            sensitivityLevel: { type: Type.STRING },
-            overallScore: { type: Type.INTEGER },
-            estimatedAge: { type: Type.INTEGER },
-            analysisSummary: { type: Type.STRING },
-            weatherAdvice: { type: Type.STRING },
-            metrics: {
-              type: Type.OBJECT,
-              properties: {
-                hydration: { type: Type.INTEGER },
-                oiliness: { type: Type.INTEGER },
-                sensitivity: { type: Type.INTEGER },
-                pigmentation: { type: Type.INTEGER },
-                wrinkles: { type: Type.INTEGER },
+  // Helper for actual model call to allow retries
+  const runAnalysisWithRetry = async (retryCount = 0): Promise<AnalysisResult> => {
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: {
+          parts: [
+            {
+              inlineData: {
+                mimeType: imageFile.type,
+                data: base64Data
               }
             },
-            issues: {
-              type: Type.ARRAY,
-              items: {
+            { text: prompt }
+          ]
+        },
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              skinType: { type: Type.STRING },
+              skinTone: { type: Type.STRING },
+              sensitivityLevel: { type: Type.STRING },
+              overallScore: { type: Type.INTEGER },
+              estimatedAge: { type: Type.INTEGER },
+              analysisSummary: { type: Type.STRING },
+              weatherAdvice: { type: Type.STRING },
+              metrics: {
                 type: Type.OBJECT,
                 properties: {
-                  label: { type: Type.STRING },
-                  description: { type: Type.STRING },
-                  box_2d: {
-                    type: Type.ARRAY,
-                    items: { type: Type.INTEGER },
-                    description: "Bounding box [ymin, xmin, ymax, xmax] 0-1000"
+                  hydration: { type: Type.INTEGER },
+                  oiliness: { type: Type.INTEGER },
+                  sensitivity: { type: Type.INTEGER },
+                  pigmentation: { type: Type.INTEGER },
+                  wrinkles: { type: Type.INTEGER },
+                }
+              },
+              issues: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    label: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    box_2d: {
+                      type: Type.ARRAY,
+                      items: { type: Type.INTEGER },
+                      description: "Bounding box [ymin, xmin, ymax, xmax] 0-1000"
+                    }
                   }
                 }
-              }
-            },
-            products: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  step: { type: Type.STRING },
-                  category: { type: Type.STRING },
-                  name: { type: Type.STRING },
-                  brand: { type: Type.STRING },
-                  keyIngredient: { type: Type.STRING },
-                  reason: { type: Type.STRING },
-                  priceUsd: { type: Type.INTEGER },
+              },
+              products: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    step: { type: Type.STRING },
+                    category: { type: Type.STRING },
+                    name: { type: Type.STRING },
+                    brand: { type: Type.STRING },
+                    keyIngredient: { type: Type.STRING },
+                    reason: { type: Type.STRING },
+                    priceUsd: { type: Type.INTEGER },
+                  }
                 }
               }
             }
           }
         }
-      }
-    });
+      });
 
-    if (response.text) {
-      return JSON.parse(response.text) as AnalysisResult;
-    } else {
-      throw new Error("No response text received from Gemini.");
+      if (response.text) {
+        return JSON.parse(response.text) as AnalysisResult;
+      } else {
+        throw new Error("No response text received from Gemini.");
+      }
+    } catch (error: any) {
+      console.error(`Attempt ${retryCount + 1} Error:`, error);
+
+      const isRetryable = error.message?.includes("503") ||
+        error.message?.includes("UNAVAILABLE") ||
+        error.message?.includes("429") ||
+        error.message?.includes("RESOURCE_EXHAUSTED");
+
+      if (isRetryable && retryCount < 2) {
+        // Wait for exponential backoff (1s, 2s)
+        const delay = Math.pow(2, retryCount) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return runAnalysisWithRetry(retryCount + 1);
+      }
+
+      // Final failure handling
+      if (error.message?.includes("503") || error.message?.includes("UNAVAILABLE")) {
+        const busyMsg = language === 'ko'
+          ? "구글 서버가 현재 매우 바쁩니다. 약 1분 후 다시 시도해 주세요."
+          : "Google server is currently busy. Please try again in 1 minute.";
+        throw new Error(busyMsg);
+      }
+
+      if (error.message?.includes("429") || error.message?.includes("RESOURCE_EXHAUSTED")) {
+        const quotaMsg = language === 'ko'
+          ? "AI 분석 사용량이 일시적으로 초과되었습니다. 잠시 후 다시 시도해 보세요."
+          : "AI Quota exceeded temporarily. Please try again in a few moments.";
+        throw new Error(quotaMsg);
+      }
+
+      throw error;
     }
-  } catch (error) {
-    console.error("Gemini Analysis Error:", error);
-    throw error;
-  }
+  };
+
+  return runAnalysisWithRetry();
 };
