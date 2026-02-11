@@ -33,16 +33,19 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
           <div
             key={index}
             className={`absolute border-2 transition-all duration-300 cursor-pointer ${activeIssue === index
-                ? 'border-rose-400 bg-rose-500/20 z-20 shadow-[0_0_15px_rgba(244,63,94,0.5)]'
-                : 'border-white/50 hover:border-white hover:bg-white/10 z-10'
+              ? 'border-rose-400 bg-rose-500/20 z-20 shadow-[0_0_20px_rgba(244,63,94,0.6)] scale-[1.02]'
+              : 'border-white/40 hover:border-white hover:bg-white/10 z-10'
               }`}
             style={{ top: `${top}%`, left: `${left}%`, height: `${height}%`, width: `${width}%` }}
             onClick={() => setActiveIssue(index === activeIssue ? null : index)}
           >
+            {/* Pulsing indicator */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-rose-500 rounded-full animate-ping opacity-75"></div>
+
             {/* Label Tag */}
-            <div className={`absolute -top-7 left-0 whitespace-nowrap px-2 py-0.5 rounded-md text-xs font-bold transition-opacity ${activeIssue === index
-                ? 'bg-rose-500 text-white opacity-100'
-                : 'bg-black/60 text-white opacity-0 group-hover:opacity-100'
+            <div className={`absolute -top-7 left-0 whitespace-nowrap px-2 py-0.5 rounded-md text-[10px] uppercase font-black tracking-tighter transition-all ${activeIssue === index
+              ? 'bg-rose-500 text-white opacity-100 translate-y-0 shadow-lg'
+              : 'bg-black/40 text-white opacity-0 group-hover:opacity-100 translate-y-1 backdrop-blur-sm'
               }`}>
               {issue.label}
             </div>
