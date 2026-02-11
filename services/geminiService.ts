@@ -43,13 +43,19 @@ export const analyzeSkin = async (
     Analyze this skin image as a world-class K-Beauty dermatologist. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    CRITICAL INSTRUCTIONS:
-    1. EXHAUSTIVE ANALYSIS: Describe the skin's texture, specific concerns (redness, pores, acne), and aging state in the analysisSummary.
-    2. 5-STEP ROUTINE: You MUST recommend 5 DIFFERENT products from brands like Anua, Round Lab, COSRX, Beauty of Joseon, or Dr.G.
-       - Each product MUST have a 'name', 'brand', and 'reason'.
-       - 'priceUsd' MUST be a valid number between 10 and 60. No currency symbols.
-    3. FACE MAPPING (DETECTION): You MUST find and mark at least 2-4 areas of concern on the face using [ymin, xmin, ymax, xmax] coordinates (0-1000). 
-       - Labels: 'Redness Area', 'Concentrated Pores', 'Fine Lines', 'Acne Spot', 'Dry Patch'.
+    CRITICAL SCORING & ANALYSIS RULES:
+    1. SCORING (0-100 SCALE): 
+       - 95-100: Absolute perfection (Celebrity skin).
+       - 85-94: Exceptional health, very minor concerns.
+       - 70-84: Good condition, common concerns like slight dehydration or pores.
+       - Below 60: Significant issues requiring intensive care.
+       *If the skin is high-quality (like this user), DO NOT give a low score.*
+    
+    2. EXHAUSTIVE ANALYSIS: Detail the skin's texture, radiance, and specific strengths/weaknesses in analysisSummary.
+    3. FACE MAPPING: Identify zones for 'Hydration Peak', 'Smooth Texture', or specific concerns like 'Slight Redness'.
+       - Use [ymin, xmin, ymax, xmax] coordinates (0-1000).
+    4. 5-STEP ROUTINE: Recommend 5 distinct products (Anua, Round Lab, COSRX, etc.). 
+       - priceUsd: valid number (10-60), no symbols.
     
     Return pure JSON matching the schema precisely.
   `;
@@ -142,8 +148,12 @@ export const analyzeSkin = async (
         const cleanJson = text.substring(firstBrace, lastBrace + 1);
         const parsed = JSON.parse(cleanJson) as AnalysisResult;
 
-        // Strict Cleaning for NaN prevention and quality assurance
-        parsed.overallScore = Number(parsed.overallScore) || 75;
+        // Post-processing to ensure no NaNs and healthy data
+        let finalScore = Number(parsed.overallScore) || 75;
+        // Safety: If AI returns 0-10 scale despite instruction, convert to 0-100
+        if (finalScore > 0 && finalScore <= 10) finalScore = finalScore * 10;
+        parsed.overallScore = finalScore;
+
         parsed.estimatedAge = Number(parsed.estimatedAge) || (demographics.ageGroup.includes('20') ? 25 : 35);
 
         if (parsed.products) {
