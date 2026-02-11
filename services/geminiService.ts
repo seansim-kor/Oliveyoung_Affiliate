@@ -43,18 +43,15 @@ export const analyzeSkin = async (
     Analyze this skin image as a world-class senior dermatologist. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    CLINICAL OBJECTIVITY REQUIREMENTS:
-    1. STRICT EVALUATION: Perform a professional, unbiased assessment. Do not be overly complimentary. 
-    2. SCORING (0-100 SCALE):
-       - 90-100: Flawless (rare, requires near-perfect texture and tone).
-       - 80-89: Healthy (minor issues like slight sebum or fine pores).
-       - 70-79: Average (standard concerns: dehydration, occasional spots).
-       - Below 60: Poor (significant clinical issues).
-       *Note: You MUST provide an integer score based on 100 points.*
-    
-    3. DERMATOLOGICAL METRICS: Deeply analyze visible sebum levels, pore visibility, texture uniformity, and early signs of environmental damage.
-    4. ANALYSIS SUMMARY: Provide a clinical breakdown of strengths and weaknesses discovered in the scan.
-    5. FACE MAPPING: Use [ymin, xmin, ymax, xmax] coordinates (0-1000) to mark EXACT clinical locations of interest.
+    ACCURATE FACE MAPPING & DETECTION RULES:
+    1. COORDINATE SYSTEM: Use [ymin, xmin, ymax, xmax] where 0 is top/left and 1000 is bottom/right of the ENTIRE image.
+    2. PINPOINT ACCURACY: You MUST identify the face first. Do NOT place markers on hair, clothing, or background.
+    3. ANATOMICAL TARGETING: Mark EXACT locations on skin tissues only:
+       - 'Forehead': [ymin: 150-300, xmin: 300-700] range usually.
+       - 'Cheeks': Mid-face area.
+       - 'Nasolabial': Around the mouth.
+    4. CLINICAL OBJECTIVITY: Perform an unbiased assessment.
+    5. SCORING (0-100): Professional dermatological scale. 90+ is rare/flawless.
     
     Return pure JSON matching the schema precisely.
   `;
