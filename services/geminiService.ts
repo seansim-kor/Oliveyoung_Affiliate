@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, HarmCategory, HarmBlockThreshold } from "@google/genai";
 import { AnalysisResult, Language, UserDemographics } from "../types";
 
 // Helper to convert File to Base64
@@ -152,14 +152,26 @@ export const analyzeSkin = async (
                 }
               }
             }
-          }
+          },
+          // Relax safety settings for skin analysis (often flagged erroneously as medical or nudity)
+          safetySettings: [
+            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE }
+          ]
         }
       });
 
       if (response.text) {
         return JSON.parse(response.text) as AnalysisResult;
       } else {
-        throw new Error("No response text received from Gemini.");
+        // Check if blocked by safety
+        const finishReason = response.candidates?.[0]?.finishReason;
+        if (finishReason === "SAFETY") {
+          throw new Error("SAFETY_BLOCK");
+        }
+        throw new Error(`Analysis failed (Reason: ${finishReason || 'Unknown'}). Please try a different photo.`);
       }
     } catch (error: any) {
       console.error(`Attempt ${retryCount + 1} Error:`, error);
@@ -189,6 +201,13 @@ export const analyzeSkin = async (
           ? "AI 분석 사용량이 일시적으로 초과되었습니다. 잠시 후 다시 시도해 보세요."
           : "AI Quota exceeded temporarily. Please try again in a few moments.";
         throw new Error(quotaMsg);
+      }
+
+      if (error.message === "SAFETY_BLOCK") {
+        const safetyMsg = language === 'ko'
+          ? "AI가 사진에서 피부 상태를 확인하지 못했습니다. 더 선명한 얼굴 사진을 사용해 주세요."
+          : "AI couldn't detect skin profile. Please use a clearer face photo.";
+        throw new Error(safetyMsg);
       }
 
       throw error;

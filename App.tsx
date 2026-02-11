@@ -150,7 +150,7 @@ const App: React.FC = () => {
       if (err.message && err.message.includes("API Key")) {
         setError(`Environment Configuration Error: ${err.message}`);
       } else {
-        setError(t.error);
+        setError(err.message || t.error);
       }
       setView(AppView.LANDING);
     } finally {
