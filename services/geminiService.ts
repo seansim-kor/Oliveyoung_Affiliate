@@ -40,22 +40,29 @@ export const analyzeSkin = async (
   const langInstruction = language === 'ko' ? "Respond entirely in Korean." : "Respond in English.";
 
   const prompt = `
-    Perform an elite-level clinical skin analysis. Respond as a Senior Dermatologist. ${langInstruction}
+    Analyze this photo with 'Geometric Precision'. Act as a Senior Aesthetic Surgeon. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    1. CLINICAL TARGET MAPPING (REQUIRED):
-       - Use 'Vision-First' spatial reasoning to precisely locate the face.
-       - You MUST identify and provide coordinates for exactly 4 distinct areas: 
-         (e.g., Forehead Zone, Malar/Cheek Region, T-Zone, and Mandibular/Chin line).
-       - For issues, provide precise [ymin, xmin, ymax, xmax] coordinates (0-1000 scale).
-       - Ensure markers are placed ON the skin, not on hair or empty space.
+    SPATIAL REASONING PROTOCOL:
+    1. PRIMARY FACE LOCALIZATION:
+       - First, identify the BOUNDING BOX of the face: [ymin, xmin, ymax, xmax] (0-1000).
+       - All subsequent skin markers MUST be mathematically centered within this face box.
     
-    2. RICH CLINICAL SUMMARY: 
-       - Minimum 4 Insightful sentences describing sebum, texture, and barrier health.
+    2. ANATOMICAL PINPOINTING (REQUIRED: 4 MARKERS):
+       - 'Center Forehead': Target the glabella/frontal area. (Avoid the hairline!)
+       - 'Left/Right Zygomatic': Target the peak of each cheekbone on the actual skin.
+       - 'Mentalis/Chin': Target the center of the chin.
+       - 'T-Zone': Target the nasal bridge and immediate surrounding area.
     
-    3. OBJECTIVE SCORING (0-100): Professional dermatological assessment.
+    3. CLINICAL COORDINATES: 
+       - For EACH marker, provide a tiny, precise [ymin, xmin, ymax, xmax] box (e.g., a 40x40 unit square).
+       - Coordinates must be relative to the 0-1000 scale of the ORIGINAL IMAGE.
     
-    Return pure JSON following the schema perfectly.
+    4. STRICT FILTER: Zero tolerance for markers on hair, ears, eyes, or background.
+    
+    5. PROFESSIONAL SUMMARY: 4+ sentences of objective clinical findings.
+    
+    Return pure JSON with surgically accurate bounding boxes.
   `;
 
   const model = genAI.getGenerativeModel({
