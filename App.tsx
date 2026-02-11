@@ -498,8 +498,9 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="pt-4 border-t border-white/10">
-                  <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs font-bold uppercase tracking-wide">
-                    <UserCheck size={14} /> Analysis for {demographics.gender}, {demographics.ageGroup}
+                  <div className="flex items-center gap-2 mb-2 text-rose-300 text-xs font-bold uppercase tracking-wider">
+                    <UserCheck size={14} />
+                    {language === 'ko' ? `전문의 소견 (${demographics.gender}, ${demographics.ageGroup})` : `Clinical Opinion (${demographics.gender}, ${demographics.ageGroup})`}
                   </div>
                   <p className="text-sm text-slate-300 leading-relaxed">
                     {result.analysisSummary}

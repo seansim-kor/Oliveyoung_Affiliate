@@ -81,9 +81,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
         )}
       </div>
 
-      <p className="text-sm text-slate-600 mb-4 flex-grow leading-relaxed">
-        {product.reason}
-      </p>
+      <div className="space-y-2 mb-4 flex-grow">
+        <div className="flex items-start gap-2">
+          <div className="mt-1 text-rose-400 shrink-0"><Sparkles size={14} /></div>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            <span className="font-bold text-slate-800">{storeRegion === 'Global' ? 'Clinical Benefit: ' : '기대 효과: '}</span>
+            {product.reason}
+          </p>
+        </div>
+      </div>
 
       <button
         onClick={handleBuyClick}
