@@ -40,24 +40,26 @@ export const analyzeSkin = async (
   const langInstruction = language === 'ko' ? "Respond entirely in Korean." : "Respond in English.";
 
   const prompt = `
-    Analyze this image with 'Clinical Precision' and 'State-of-the-Art Face Detection'. ${langInstruction}
+    Perform an elite-level clinical skin analysis. Respond as a Senior Dermatologist. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    DETECTION & ANALYSIS WORKFLOW:
-    1. FACE RECOGNITION (CRITICAL):
-       - First, identify the precise coordinates of the face(s) in the image.
-       - You MUST only analyze skin within the detected face area.
-       - DO NOT hallucinate markers on hair, clothing, forehead bands, or the background.
+    1. RICH CLINICAL SUMMARY (analysisSummary): 
+       - Provide a deep, insightful analysis (minimum 3-4 professional sentences).
+       - Cover: Sebum activity, dermal texture uniformity, barrier health, and specific clinical strengths or degradation noted.
+       - Tone: Professional, authoritative, and medically insightful.
     
-    2. SPATIAL MAPPING:
-       - Map all clinical issues (sebum, redness, pores, fine lines) to specific anatomical regions: Cheeks, Forehead, T-Zone, Chin.
-       - Use [ymin, xmin, ymax, xmax] coordinates (0-1000) relative to the ENTIRE image.
+    2. FACE RECOGNITION & SPATIAL MAPPING:
+       - Localize the face and map at least 3 clinical markers onto precise skin areas.
+       - Use [ymin, xmin, ymax, xmax] relative to the original image.
     
-    3. OBJECTIVE EVALUATION:
-       - Perform a professional, neutral dermatological assessment.
-       - overallScore: Integer (0-100). Only give 95+ for flawless, celebrity-grade skin.
+    3. OBJECTIVE SCORING (0-100):
+       - 90-100: Flawless/Celebrity condition.
+       - 80-89: Healthy with minor sebum/pore activity.
+       - 70-79: Moderate/Standard.
     
-    Return pure JSON with accurate bounding boxes for at least 3 clinical observations.
+    4. 5-STEP ROUTINE: Recommend 5 distinct premium K-Beauty products with clinical reasoning for each.
+    
+    Return pure JSON with the full clinical report.
   `;
 
   const model = genAI.getGenerativeModel({
