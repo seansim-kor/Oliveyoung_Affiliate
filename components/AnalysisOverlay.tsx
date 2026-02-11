@@ -12,17 +12,17 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
 
   return (
     <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-slate-100 shadow-md mb-6 group">
-      <img 
-        src={imageSrc} 
-        alt="Analyzed Face" 
+      <img
+        src={imageSrc}
+        alt="Analyzed Face"
         className="w-full h-full object-cover"
       />
-      
+
       {/* Overlays */}
-      {issues.map((issue, index) => {
+      {issues?.map((issue, index) => {
         if (!issue.box_2d) return null;
         const [ymin, xmin, ymax, xmax] = issue.box_2d;
-        
+
         // Convert 0-1000 scale to percentages
         const top = ymin / 10;
         const left = xmin / 10;
@@ -32,20 +32,18 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
         return (
           <div
             key={index}
-            className={`absolute border-2 transition-all duration-300 cursor-pointer ${
-              activeIssue === index 
-                ? 'border-rose-400 bg-rose-500/20 z-20 shadow-[0_0_15px_rgba(244,63,94,0.5)]' 
+            className={`absolute border-2 transition-all duration-300 cursor-pointer ${activeIssue === index
+                ? 'border-rose-400 bg-rose-500/20 z-20 shadow-[0_0_15px_rgba(244,63,94,0.5)]'
                 : 'border-white/50 hover:border-white hover:bg-white/10 z-10'
-            }`}
+              }`}
             style={{ top: `${top}%`, left: `${left}%`, height: `${height}%`, width: `${width}%` }}
             onClick={() => setActiveIssue(index === activeIssue ? null : index)}
           >
             {/* Label Tag */}
-            <div className={`absolute -top-7 left-0 whitespace-nowrap px-2 py-0.5 rounded-md text-xs font-bold transition-opacity ${
-              activeIssue === index 
-                ? 'bg-rose-500 text-white opacity-100' 
+            <div className={`absolute -top-7 left-0 whitespace-nowrap px-2 py-0.5 rounded-md text-xs font-bold transition-opacity ${activeIssue === index
+                ? 'bg-rose-500 text-white opacity-100'
                 : 'bg-black/60 text-white opacity-0 group-hover:opacity-100'
-            }`}>
+              }`}>
               {issue.label}
             </div>
           </div>
@@ -60,7 +58,7 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
               <h4 className="font-bold text-slate-800 text-sm">{issues[activeIssue].label}</h4>
               <p className="text-xs text-slate-600 mt-1">{issues[activeIssue].description}</p>
             </div>
-            <button 
+            <button
               onClick={(e) => { e.stopPropagation(); setActiveIssue(null); }}
               className="text-slate-400 hover:text-slate-600"
             >
@@ -69,7 +67,7 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
           </div>
         </div>
       )}
-      
+
       {/* Hint overlay if nothing selected */}
       {activeIssue === null && issues.length > 0 && (
         <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">

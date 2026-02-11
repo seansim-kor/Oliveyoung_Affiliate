@@ -205,8 +205,8 @@ const App: React.FC = () => {
 
   // Calculate Totals for Bundle
   const calculateTotals = () => {
-    if (!result) return { original: 0, discounted: 0, savings: 0 };
-    const original = result.products.reduce((acc, curr) => acc + curr.priceUsd, 0);
+    if (!result || !result.products) return { original: 0, discounted: 0, savings: 0 };
+    const original = result.products.reduce((acc, curr) => acc + (curr?.priceUsd || 0), 0);
     const discounted = Math.floor(original * 0.9);
     return { original, discounted, savings: original - discounted };
   };
@@ -525,7 +525,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Chart */}
-            <SkinRadarChart metrics={result.metrics} />
+            {result.metrics && <SkinRadarChart metrics={result.metrics} />}
 
             {/* Recommendations Header */}
             <div className="pt-4">
@@ -533,7 +533,7 @@ const App: React.FC = () => {
               <p className="text-sm text-slate-500 mb-4">{t.picksFor} {demographics.ageGroup} {demographics.gender}.</p>
 
               <div className="space-y-4">
-                {result.products.map((product, idx) => (
+                {result.products?.map((product, idx) => (
                   <ProductCard
                     key={idx}
                     product={product}

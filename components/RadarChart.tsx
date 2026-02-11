@@ -8,11 +8,11 @@ interface SkinRadarChartProps {
 
 export const SkinRadarChart: React.FC<SkinRadarChartProps> = ({ metrics }) => {
   const data = [
-    { subject: 'Hydration', A: metrics.hydration, fullMark: 100 },
-    { subject: 'Oil Control', A: 100 - metrics.oiliness, fullMark: 100 }, // Invert oil for "better" score visually
-    { subject: 'Resilience', A: 100 - metrics.sensitivity, fullMark: 100 }, // Invert sensitivity
-    { subject: 'Tone', A: 100 - metrics.pigmentation, fullMark: 100 },
-    { subject: 'Firmness', A: 100 - metrics.wrinkles, fullMark: 100 },
+    { subject: 'Hydration', A: metrics?.hydration || 0, fullMark: 100 },
+    { subject: 'Oil Control', A: 100 - (metrics?.oiliness || 0), fullMark: 100 },
+    { subject: 'Resilience', A: 100 - (metrics?.sensitivity || 0), fullMark: 100 },
+    { subject: 'Tone', A: 100 - (metrics?.pigmentation || 0), fullMark: 100 },
+    { subject: 'Firmness', A: 100 - (metrics?.wrinkles || 0), fullMark: 100 },
   ];
 
   return (
