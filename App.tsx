@@ -9,6 +9,9 @@ import { CameraCapture } from './components/CameraCapture';
 import { AnalysisOverlay } from './components/AnalysisOverlay';
 import { DemographicsSelector } from './components/DemographicsSelector';
 import { RewardCard } from './components/RewardCard';
+import { GoogleAd } from './components/GoogleAd';
+import { SKIN_GUIDE } from './content/skinGuide';
+import { TERMS_TEXT } from './content/legal';
 
 const REFERRAL_LINK = "https://global.oliveyoung.com/member/join?reco_id=71161220260209121639";
 
@@ -98,6 +101,7 @@ const App: React.FC = () => {
   const [analyzing, setAnalyzing] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showLegal, setShowLegal] = useState<'none' | 'terms' | 'privacy'>('none');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -317,34 +321,68 @@ const App: React.FC = () => {
 
           {/* SEO/GEO CONTENT SECTIONS */}
           <div className="px-6 pb-20 space-y-12 relative z-10 border-t border-slate-100 pt-12 mt-8">
-            {/* Why Us Section */}
-            <section>
-              <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Sparkles size={20} className="text-rose-500" />
-                {t.whyTitle}
-              </h2>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                {t.whyDesc}
-              </p>
-            </section>
+            {/* 전문가 가이드 섹션 (AdSense 고품질 콘텐츠 요구사항 대응) */}
+            <section className="space-y-10">
+              <header>
+                <h2 className="text-2xl font-bold text-slate-900 mb-2">{SKIN_GUIDE[language].title}</h2>
+                <p className="text-slate-500 text-sm italic">{SKIN_GUIDE[language].intro}</p>
+              </header>
 
-            {/* How It Works Section */}
-            <section>
-              <h2 className="text-xl font-bold text-slate-900 mb-4">
-                {t.howTitle}
-              </h2>
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center text-xs font-bold shrink-0">1</div>
-                  <p className="text-slate-600 text-sm">{t.howStep1}</p>
+              {/* About Us / Mission Section */}
+              <div className="p-6 bg-rose-50 rounded-3xl border border-rose-100">
+                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <UserCheck size={18} className="text-rose-500" />
+                  {language === 'ko' ? '서비스 소개 및 비전' : 'About K-Beauty Mirror'}
+                </h3>
+                <p className="text-slate-600 text-xs leading-relaxed">
+                  {language === 'ko'
+                    ? "K-뷰티 미러는 최신 AI 멀티모달 기술과 한국의 전문 스킨케어 지식을 결합한 혁신적인 플랫폼입니다. 우리의 목표는 전 세계 모든 사용자가 기후와 환경에 상관없이 자신만의 완벽한 피부 솔루션을 찾을 수 있도록 돕는 것입니다. 데이터에 기반한 투명한 성분 분석과 검증된 올리브영 랭킹 제품만을 추천하여, 당신의 피부 건강을 진심으로 보살핍니다."
+                    : "K-Beauty Mirror is an innovative platform that combines the latest AI multimodal technology with expert Korean skincare knowledge. Our goal is to help users worldwide find their perfect skin solution, regardless of climate and environment. We provide data-driven ingredient analysis and recommend only verified Olive Young bestsellers to truly care for your skin health."}
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                  <Sparkles size={18} className="text-rose-400" />
+                  {SKIN_GUIDE[language].philosophyTitle}
+                </h3>
+                <p className="text-slate-600 text-sm mb-6 leading-relaxed">{SKIN_GUIDE[language].philosophyDesc}</p>
+                <div className="grid gap-4">
+                  {SKIN_GUIDE[language].steps.map((step, i) => (
+                    <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                      <h4 className="font-bold text-slate-800 text-sm mb-1">{step.name}</h4>
+                      <p className="text-slate-500 text-xs leading-relaxed">{step.desc}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xs font-bold shrink-0">2</div>
-                  <p className="text-slate-600 text-sm">{t.howStep2}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 mb-4">{SKIN_GUIDE[language].typesTitle}</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {SKIN_GUIDE[language].types.map((type, i) => (
+                    <div key={i} className="p-4 bg-rose-50/30 rounded-2xl border border-rose-100/50">
+                      <h4 className="font-bold text-rose-600 text-sm mb-1">{type.name}</h4>
+                      <p className="text-slate-500 text-[10px] leading-snug">{type.desc}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 rounded-full bg-slate-50 text-slate-500 flex items-center justify-center text-xs font-bold shrink-0">3</div>
-                  <p className="text-slate-600 text-sm">{t.howStep3}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 mb-4">{SKIN_GUIDE[language].ingredientsTitle}</h3>
+                <div className="space-y-4">
+                  {SKIN_GUIDE[language].ingredients.map((ing, i) => (
+                    <div key={i} className="flex gap-4 items-start">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                        <Sparkles size={16} className="text-rose-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-800 text-sm">{ing.name}</h4>
+                        <p className="text-slate-500 text-xs">{ing.desc}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </section>
@@ -366,7 +404,28 @@ const App: React.FC = () => {
                 </div>
               </div>
             </section>
+
+            {/* AdSense Placement - Only show on landing where content is high */}
+            <GoogleAd />
           </div>
+
+          {/* Footer Section */}
+          <footer className="px-6 py-12 bg-slate-50 border-t border-slate-200 mt-auto z-10 relative">
+            <div className="max-w-md mx-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center text-white text-[10px] font-serif italic">K</div>
+                <span className="font-bold text-sm tracking-tighter uppercase text-slate-800">K-Beauty Mirror</span>
+              </div>
+              <p className="text-[10px] text-slate-400 mb-6 leading-relaxed">
+                © 2025 K-Beauty Mirror. Powered by Advanced AI Dermatology Insights. Recommendations are for informational purposes.
+              </p>
+              <div className="flex flex-wrap gap-4 border-t border-slate-200 pt-6">
+                <button onClick={() => setShowLegal('terms')} className="text-[10px] font-bold text-slate-500 hover:text-rose-500 uppercase tracking-widest">Terms</button>
+                <button onClick={() => setShowLegal('privacy')} className="text-[10px] font-bold text-slate-500 hover:text-rose-500 uppercase tracking-widest">Privacy</button>
+                <a href="mailto:support@k-beauty-mirror.site" className="text-[10px] font-bold text-slate-500 hover:text-rose-500 uppercase tracking-widest">Contact</a>
+              </div>
+            </div>
+          </footer>
         </article>
       )}
 
@@ -531,7 +590,33 @@ const App: React.FC = () => {
               </div>
             </Button>
           </div>
+
+          <GoogleAd className="mb-24" />
         </article>
+      )}
+
+      {/* Legal Modal Overlay */}
+      {showLegal !== 'none' && (
+        <div className="fixed inset-0 z-[100] bg-white overflow-y-auto p-8 flex flex-col">
+          <div className="max-w-md mx-auto w-full">
+            <header className="flex justify-between items-center mb-8">
+              <h2 className="text-xl font-bold text-slate-900 uppercase tracking-tighter">
+                {showLegal === 'terms' ? (language === 'ko' ? '이용약관' : 'Terms of Service') : (language === 'ko' ? '개인정보처리방침' : 'Privacy Policy')}
+              </h2>
+              <button onClick={() => setShowLegal('none')} className="p-2 bg-slate-100 rounded-full">
+                <ChevronRight className="rotate-90" size={20} />
+              </button>
+            </header>
+            <div className="prose prose-slate prose-sm max-w-none">
+              <pre className="whitespace-pre-wrap font-sans text-slate-600 leading-relaxed text-xs">
+                {showLegal === 'terms' ? TERMS_TEXT[language].terms : TERMS_TEXT[language].privacy}
+              </pre>
+            </div>
+            <Button onClick={() => setShowLegal('none')} fullWidth className="mt-12 bg-slate-900">
+              Close
+            </Button>
+          </div>
+        </div>
       )}
     </>
   );
