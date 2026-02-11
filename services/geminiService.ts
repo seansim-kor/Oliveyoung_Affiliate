@@ -40,20 +40,24 @@ export const analyzeSkin = async (
   const langInstruction = language === 'ko' ? "Respond entirely in Korean." : "Respond in English.";
 
   const prompt = `
-    Analyze this skin image as a world-class senior dermatologist. ${langInstruction}
+    Analyze this image with 'Clinical Precision' and 'State-of-the-Art Face Detection'. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    ACCURATE FACE MAPPING & DETECTION RULES:
-    1. COORDINATE SYSTEM: Use [ymin, xmin, ymax, xmax] where 0 is top/left and 1000 is bottom/right of the ENTIRE image.
-    2. PINPOINT ACCURACY: You MUST identify the face first. Do NOT place markers on hair, clothing, or background.
-    3. ANATOMICAL TARGETING: Mark EXACT locations on skin tissues only:
-       - 'Forehead': [ymin: 150-300, xmin: 300-700] range usually.
-       - 'Cheeks': Mid-face area.
-       - 'Nasolabial': Around the mouth.
-    4. CLINICAL OBJECTIVITY: Perform an unbiased assessment.
-    5. SCORING (0-100): Professional dermatological scale. 90+ is rare/flawless.
+    DETECTION & ANALYSIS WORKFLOW:
+    1. FACE RECOGNITION (CRITICAL):
+       - First, identify the precise coordinates of the face(s) in the image.
+       - You MUST only analyze skin within the detected face area.
+       - DO NOT hallucinate markers on hair, clothing, forehead bands, or the background.
     
-    Return pure JSON matching the schema precisely.
+    2. SPATIAL MAPPING:
+       - Map all clinical issues (sebum, redness, pores, fine lines) to specific anatomical regions: Cheeks, Forehead, T-Zone, Chin.
+       - Use [ymin, xmin, ymax, xmax] coordinates (0-1000) relative to the ENTIRE image.
+    
+    3. OBJECTIVE EVALUATION:
+       - Perform a professional, neutral dermatological assessment.
+       - overallScore: Integer (0-100). Only give 95+ for flawless, celebrity-grade skin.
+    
+    Return pure JSON with accurate bounding boxes for at least 3 clinical observations.
   `;
 
   const model = genAI.getGenerativeModel({

@@ -11,11 +11,11 @@ export const AnalysisOverlay: React.FC<AnalysisOverlayProps> = ({ imageSrc, issu
   const [activeIssue, setActiveIssue] = useState<number | null>(null);
 
   return (
-    <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden bg-slate-100 shadow-md mb-6 group">
+    <div className="relative w-full rounded-3xl overflow-hidden bg-slate-900 shadow-md mb-6 group">
       <img
         src={imageSrc}
         alt="Analyzed Face"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
       />
 
       {/* Overlays */}
