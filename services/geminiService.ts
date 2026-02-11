@@ -84,23 +84,19 @@ export const analyzeSkin = async (
   `;
 
   try {
-    // Use Gemini 2.0 Flash as requested for better performance/latest features.
-    // If this fails, we can fall back to 'gemini-1.5-flash' or 'gemini-1.5-flash-001'.
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: [
-        {
-          parts: [
-            {
-              inlineData: {
-                mimeType: imageFile.type,
-                data: base64Data
-              }
-            },
-            { text: prompt }
-          ]
-        }
-      ],
+      model: 'gemini-3-flash-preview',
+      contents: {
+        parts: [
+          {
+            inlineData: {
+              mimeType: imageFile.type,
+              data: base64Data
+            }
+          },
+          { text: prompt }
+        ]
+      },
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -161,8 +157,7 @@ export const analyzeSkin = async (
     if (response.text) {
       return JSON.parse(response.text) as AnalysisResult;
     } else {
-      console.error("Gemini Response Missing Text:", response);
-      throw new Error(`No response text received from Gemini. Prompt Feedback: ${JSON.stringify(response.promptFeedback)}`);
+      throw new Error("No response text received from Gemini.");
     }
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
