@@ -40,22 +40,21 @@ export const analyzeSkin = async (
   const langInstruction = language === 'ko' ? "Respond entirely in Korean." : "Respond in English.";
 
   const prompt = `
-    Analyze this skin image as a world-class K-Beauty dermatologist. ${langInstruction}
+    Analyze this skin image as a world-class senior dermatologist. ${langInstruction}
     USER: ${demographics.gender}, ${demographics.ageGroup}, Location: ${locationName}.
     
-    CRITICAL SCORING & ANALYSIS RULES:
-    1. SCORING (0-100 SCALE): 
-       - 95-100: Absolute perfection (Celebrity skin).
-       - 85-94: Exceptional health, very minor concerns.
-       - 70-84: Good condition, common concerns like slight dehydration or pores.
-       - Below 60: Significant issues requiring intensive care.
-       *If the skin is high-quality (like this user), DO NOT give a low score.*
+    CLINICAL OBJECTIVITY REQUIREMENTS:
+    1. STRICT EVALUATION: Perform a professional, unbiased assessment. Do not be overly complimentary. 
+    2. SCORING (0-100 SCALE):
+       - 90-100: Flawless (rare, requires near-perfect texture and tone).
+       - 80-89: Healthy (minor issues like slight sebum or fine pores).
+       - 70-79: Average (standard concerns: dehydration, occasional spots).
+       - Below 60: Poor (significant clinical issues).
+       *Note: You MUST provide an integer score based on 100 points.*
     
-    2. EXHAUSTIVE ANALYSIS: Detail the skin's texture, radiance, and specific strengths/weaknesses in analysisSummary.
-    3. FACE MAPPING: Identify zones for 'Hydration Peak', 'Smooth Texture', or specific concerns like 'Slight Redness'.
-       - Use [ymin, xmin, ymax, xmax] coordinates (0-1000).
-    4. 5-STEP ROUTINE: Recommend 5 distinct products (Anua, Round Lab, COSRX, etc.). 
-       - priceUsd: valid number (10-60), no symbols.
+    3. DERMATOLOGICAL METRICS: Deeply analyze visible sebum levels, pore visibility, texture uniformity, and early signs of environmental damage.
+    4. ANALYSIS SUMMARY: Provide a clinical breakdown of strengths and weaknesses discovered in the scan.
+    5. FACE MAPPING: Use [ymin, xmin, ymax, xmax] coordinates (0-1000) to mark EXACT clinical locations of interest.
     
     Return pure JSON matching the schema precisely.
   `;
