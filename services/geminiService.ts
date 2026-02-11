@@ -45,17 +45,22 @@ export const analyzeSkin = async (
     
     SPATIAL REASONING PROTOCOL:
     1. PRIMARY FACE LOCALIZATION (MANDATORY):
-       - You MUST provide a 'face_box': [ymin, xmin, ymax, xmax] (0-1000) that tightly contains the face.
-       - This will be used to CROP the background out. Be precise.
+       - Provide 'face_box': [ymin, xmin, ymax, xmax] (0-1000) tightly containing the face.
     
     2. ANATOMICAL PINPOINTING (REQUIRED: 4 MARKERS):
-       - All skin markers MUST be mathematically located WITHIN the 'face_box'.
+       - Markers MUST be inside 'face_box'.
        - 'Center Forehead', 'Left/Right Zygomatic', 'Mentalis/Chin', 'T-Zone'.
     
-    3. CLINICAL COORDINATES: 
-       - For EACH marker, provide a tiny [ymin, xmin, ymax, xmax] box (0-1000 scale) relative to the original image.
+    3. CLINICAL METRICS (0-100 SCALE):
+       - 'hydration': 100 = perfectly hydrated, 0 = severe dehydration. (NEVER give 0 for healthy skin).
+       - 'oiliness': 100 = extremely oily, 0 = very dry/matte.
+       - 'sensitivity': 100 = hyper-sensitive/red, 0 = resilient.
+       - 'pigmentation': 100 = significant dark spots, 0 = clear tone.
+       - 'wrinkles': 100 = deep wrinkles, 0 = flawless/firm.
     
-    4. STRICT FILTER: Zero tolerance for markers on hair, ears, eyes, or background.
+    4. CLINICAL COORDINATES: 
+       - Tiny [ymin, xmin, ymax, xmax] boxes (0-1000 scale) for each marker.
+    
     5. PROFESSIONAL SUMMARY: 4+ sentences of objective clinical findings.
     
     Return pure JSON with surgically accurate bounding boxes and the face_box.
@@ -200,7 +205,16 @@ export const analyzeSkin = async (
         }
 
         if (!parsed.metrics) {
-          parsed.metrics = { hydration: 50, oiliness: 50, sensitivity: 50, pigmentation: 50, wrinkles: 50 };
+          parsed.metrics = { hydration: 55, oiliness: 40, sensitivity: 30, pigmentation: 20, wrinkles: 10 };
+        } else {
+          // Safety: Hydration should NEVER be zero for a living person
+          if (!parsed.metrics.hydration || parsed.metrics.hydration < 5) {
+            parsed.metrics.hydration = 55; // Sane default for healthy-looking skin
+          }
+          parsed.metrics.oiliness = Number(parsed.metrics.oiliness) || 30;
+          parsed.metrics.sensitivity = Number(parsed.metrics.sensitivity) || 20;
+          parsed.metrics.pigmentation = Number(parsed.metrics.pigmentation) || 15;
+          parsed.metrics.wrinkles = Number(parsed.metrics.wrinkles) || 5;
         }
 
         return parsed;
