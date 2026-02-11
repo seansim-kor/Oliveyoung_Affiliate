@@ -18,9 +18,9 @@ const REFERRAL_LINK = "https://global.oliveyoung.com/member/join?reco_id=7116122
 const TEXTS = {
   en: {
     title: "K-Beauty Mirror",
-    subtitle1: "Discover your",
-    subtitle2: "true skin potential",
-    desc: "AI-powered skin analysis tailored to your environment. Get personalized K-Beauty routines in seconds.",
+    subtitle1: "AI Skin Scan.",
+    subtitle2: "Your Perfect K-Beauty Prescription.",
+    desc: "Our AI reads your unique facial profile to prescribe the ultimate K-Beauty regimen tailored to your skin and environment.",
     bonus: "Includes 10% OFF Welcome Gift",
     env: "Current Environment",
     start: "Start Analysis",
@@ -54,9 +54,9 @@ const TEXTS = {
   },
   ko: {
     title: "K-뷰티 미러",
-    subtitle1: "당신의",
-    subtitle2: "진정한 피부 잠재력",
-    desc: "당신의 환경에 맞춘 AI 기반 피부 분석. 몇 초 만에 맞춤형 K-뷰티 루틴을 제안받으세요.",
+    subtitle1: "당신의 얼굴을 읽고,",
+    subtitle2: "가장 완벽한 K-뷰티를 처방합니다.",
+    desc: "최첨단 AI 안면 스캔을 통해 당신의 피부 상태와 환경에 딱 맞는 최적의 K-뷰티 루틴을 설계해 드립니다.",
     bonus: "첫 구매 10% 할인 혜택 포함",
     env: "현재 위치 및 환경",
     start: "분석 시작하기",
@@ -290,8 +290,8 @@ const App: React.FC = () => {
             <div className="relative mb-10 mt-4 group">
               <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-1 ring-white/20">
                 <img
-                  src="https://images.unsplash.com/photo-1590483734732-3592c39e2f9d?q=80&w=800&auto=format&fit=crop"
-                  alt="K-Beauty Glow"
+                  src="https://images.unsplash.com/photo-1552662813-b5f3b7789bb0?q=80&w=800&auto=format&fit=crop"
+                  alt="K-Beauty Skin Analysis"
                   className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-[3s]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
@@ -330,14 +330,14 @@ const App: React.FC = () => {
             </div>
 
             <div className="space-y-4 mb-10">
-              <h1 className="text-4xl font-black text-white leading-none tracking-tighter uppercase">
+              <h1 className="text-3xl font-black text-white leading-tight tracking-tighter uppercase">
                 {language === 'ko' ? (
-                  <>딱 3초면 끝나요 <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">광채 레시피</span></>
+                  <>당신의 얼굴을 읽고, <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">가장 완벽한 K-뷰티를 처방합니다.</span></>
                 ) : (
-                  <>Get Your <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">Glow Routine</span></>
+                  <>AI Skin Scan. <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-rose-500">Your Perfect Prescription.</span></>
                 )}
               </h1>
-              <p className="text-slate-400 text-sm font-medium leading-relaxed pr-8">
+              <p className="text-slate-400 text-sm font-medium leading-relaxed pr-6 opacity-90">
                 {t.desc}
               </p>
             </div>
