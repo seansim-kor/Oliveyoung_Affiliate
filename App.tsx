@@ -277,15 +277,24 @@ const MainTool: React.FC = () => {
                 {t.title}
               </span>
             </div>
-            <button
-              onClick={toggleLanguage}
-              className="text-[10px] font-black uppercase tracking-widest px-4 py-2 glass-card hover:bg-white/10 rounded-full text-white transition-all active:scale-95"
-            >
-              <span className="flex items-center gap-2">
-                <Globe size={12} className="text-rose-400" />
-                {language === 'en' ? 'KO' : 'EN'}
-              </span>
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                to="/blog"
+                className="text-[10px] font-black uppercase tracking-widest px-4 py-2 glass-card hover:bg-white/10 rounded-full text-white transition-all active:scale-95 flex items-center gap-2"
+              >
+                <Sparkles size={12} className="text-orange-400" />
+                BLOG
+              </Link>
+              <button
+                onClick={toggleLanguage}
+                className="text-[10px] font-black uppercase tracking-widest px-4 py-2 glass-card hover:bg-white/10 rounded-full text-white transition-all active:scale-95"
+              >
+                <span className="flex items-center gap-2">
+                  <Globe size={12} className="text-rose-400" />
+                  {language === 'en' ? 'KO' : 'EN'}
+                </span>
+              </button>
+            </div>
           </header>
 
           <main className="flex-grow flex flex-col px-8 relative z-10 pt-4">
@@ -398,23 +407,6 @@ const MainTool: React.FC = () => {
                 {t.upload}
               </button>
 
-              {/* Tertiary CTA: Blog */}
-              <Link
-                to="/blog"
-                className="w-full py-4 px-6 border border-white/10 bg-white/5 hover:bg-white/10 rounded-3xl flex items-center justify-between gap-3 transition-all group/blog active:scale-95"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400">
-                    <Sparkles size={16} />
-                  </div>
-                  <span className="text-white font-bold uppercase tracking-widest text-[11px]">
-                    {language === 'ko' ? 'K-뷰티 최신 트렌드 읽기' : 'Read Latest K-Beauty Trends'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 text-rose-500 font-black text-[10px] tracking-widest uppercase opacity-0 group-hover/blog:opacity-100 transition-opacity">
-                  GO BLOG <ChevronRight size={14} />
-                </div>
-              </Link>
 
 
             </div>
