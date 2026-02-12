@@ -356,7 +356,27 @@ const MainTool: React.FC = () => {
               </div>
             )}
 
-            <div className="mt-auto mb-10 space-y-4">
+            <div className="mt-auto mb-10 space-y-6">
+              {/* Location Selector (Moved Above) */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center justify-center gap-3 p-3 glass-card rounded-2xl w-full">
+                  <MapPin size={16} className="text-rose-500" />
+                  <select
+                    className="bg-transparent text-white text-xs font-bold focus:outline-none appearance-none cursor-pointer uppercase tracking-wider text-center"
+                    style={{ textAlignLast: 'center' }}
+                    value={selectedLocation}
+                    onChange={(e) => setSelectedLocation(e.target.value)}
+                  >
+                    {LOCATIONS.map(loc => (
+                      <option key={loc.id} value={loc.name} className="bg-slate-900">{loc.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest opacity-60">
+                  {t.privacy}
+                </p>
+              </div>
+
               {/* Primary CTA: Camera */}
               <button
                 onClick={handleStartFlow}
@@ -397,23 +417,6 @@ const MainTool: React.FC = () => {
               </Link>
 
 
-              <div className="flex flex-col items-center gap-4 mt-8">
-                <div className="flex items-center gap-3 p-3 glass-card rounded-2xl w-full">
-                  <MapPin size={16} className="text-rose-500" />
-                  <select
-                    className="bg-transparent w-full text-white text-xs font-bold focus:outline-none appearance-none cursor-pointer uppercase tracking-wider"
-                    value={selectedLocation}
-                    onChange={(e) => setSelectedLocation(e.target.value)}
-                  >
-                    {LOCATIONS.map(loc => (
-                      <option key={loc.id} value={loc.name} className="bg-slate-900">{loc.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest opacity-60">
-                  {t.privacy}
-                </p>
-              </div>
             </div>
           </main>
 
