@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag } from 'lucide-react';
+import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Routes, Route, Link } from 'react-router-dom';
 import { AppView, LOCATIONS, AnalysisResult, Language, UserDemographics } from './types';
 import { analyzeSkin } from './services/geminiService';
 import { Button } from './components/Button';
@@ -12,6 +13,8 @@ import { RewardCard } from './components/RewardCard';
 import { GoogleAd } from './components/GoogleAd';
 import { SKIN_GUIDE } from './content/skinGuide';
 import { TERMS_TEXT } from './content/legal';
+import { BlogList } from './pages/BlogList';
+import { BlogPost } from './pages/BlogPost';
 
 const REFERRAL_LINK = "https://global.oliveyoung.com/member/join?reco_id=71161220260209121639";
 
@@ -90,7 +93,7 @@ const TEXTS = {
   }
 };
 
-const App: React.FC = () => {
+const MainTool: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.LANDING);
   const [language, setLanguage] = useState<Language>('en');
   const [selectedLocation, setSelectedLocation] = useState<string>(LOCATIONS[1].name); // Default NY
@@ -374,6 +377,25 @@ const App: React.FC = () => {
                 <Upload size={18} className="text-rose-400" />
                 {t.upload}
               </button>
+
+              {/* Tertiary CTA: Blog */}
+              <Link
+                to="/blog"
+                className="w-full py-4 px-6 border border-white/10 bg-white/5 hover:bg-white/10 rounded-3xl flex items-center justify-between gap-3 transition-all group/blog active:scale-95"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400">
+                    <Sparkles size={16} />
+                  </div>
+                  <span className="text-white font-bold uppercase tracking-widest text-[11px]">
+                    {language === 'ko' ? 'K-뷰티 최신 트렌드 읽기' : 'Read Latest K-Beauty Trends'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1 text-rose-500 font-black text-[10px] tracking-widest uppercase opacity-0 group-hover/blog:opacity-100 transition-opacity">
+                  GO BLOG <ChevronRight size={14} />
+                </div>
+              </Link>
+
 
               <div className="flex flex-col items-center gap-4 mt-8">
                 <div className="flex items-center gap-3 p-3 glass-card rounded-2xl w-full">
@@ -696,6 +718,17 @@ const App: React.FC = () => {
         </div>
       )}
     </>
+  );
+};
+
+
+const App: React.FC = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<MainTool />} />
+      <Route path="/blog" element={<BlogList />} />
+      <Route path="/blog/:id" element={<BlogPost />} />
+    </Routes>
   );
 };
 

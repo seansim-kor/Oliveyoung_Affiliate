@@ -14,8 +14,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
     // Construct search query - Brand + Name works best for Olive Young
     const query = encodeURIComponent(`${product.brand} ${product.name}`);
 
-    // Determine base URL based on Store Region
-    const baseUrl = storeRegion === 'KR'
+    // Determine base URL based on Store Region and Language
+    // If language is KO, use Korean store. Otherwise use Global English store.
+    const isKoreanStore = storeRegion === 'KR';
+
+    const baseUrl = isKoreanStore
       ? `https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${query}`
       : `https://global.oliveyoung.com/display/search?query=${query}`;
 
