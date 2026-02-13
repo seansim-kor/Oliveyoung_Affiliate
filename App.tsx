@@ -302,8 +302,8 @@ const MainTool: React.FC = () => {
             <div className="relative mb-10 mt-4 group">
               <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-1 ring-white/20">
                 <img
-                  src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop"
-                  alt="K-Beauty Analysis"
+                  src="https://images.unsplash.com/photo-1629425733761-caae3b5f2e50?q=80&w=800&auto=format&fit=crop"
+                  alt="K-Beauty AI Mirror Analysis"
                   className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] bg-slate-900"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
