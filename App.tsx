@@ -299,8 +299,9 @@ const MainTool: React.FC = () => {
 
           <main className="flex-grow flex flex-col px-8 relative z-10 pt-4">
             {/* Hero Visual Container */}
+            {/* Hero Visual Container */}
             <div className="relative mb-10 mt-4 group">
-              <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-1 ring-white/20">
+              <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-4 ring-white/20">
                 <img
                   src="/hero-image.jpg"
                   alt="K-Beauty AI Mirror Analysis"
@@ -311,33 +312,43 @@ const MainTool: React.FC = () => {
                     target.src = "https://images.unsplash.com/photo-1629425733761-caae3b5f2e50?q=80&w=800&auto=format&fit=crop";
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-violet-900/40 via-transparent to-purple-500/20 mix-blend-overlay"></div>
 
-                {/* Floating Insight Cards */}
-                <div className="absolute top-6 left-6 animate-float" style={{ animationDelay: '0s' }}>
-                  <div className="glass-card px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xl">
+                {/* Overlay: Glow Ring (Face Scan Effect) */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/5 h-3/5 border-[3px] border-cyan-300/60 rounded-full shadow-[0_0_30px_rgba(34,211,238,0.6)] animate-pulse z-10"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2/3 h-2/3 border-[1px] border-white/40 rounded-full animate-spin-slow duration-[10s]"></div>
+
+                {/* Overlay: Top Right Badge */}
+                <div className="absolute top-6 right-6">
+                  <div className="glass-card px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg border border-white/30 backdrop-blur-md">
+                    <Sparkles size={14} className="text-white animate-pulse" />
+                    <span className="text-xs font-black text-white uppercase tracking-wider">GLOW-UP ANALYZE</span>
+                  </div>
+                </div>
+
+                {/* Overlay: Floating Icons */}
+                <div className="absolute top-1/4 left-8 animate-bounce duration-[3s]">
+                  <span className="text-2xl filter drop-shadow-lg">💖</span>
+                </div>
+                <div className="absolute bottom-1/4 right-8 animate-bounce duration-[4s] delay-700">
+                  <span className="text-2xl filter drop-shadow-lg">🍑</span>
+                </div>
+                <div className="absolute top-1/3 right-12 animate-pulse duration-[2s]">
+                  <span className="text-xl filter drop-shadow-lg">✨</span>
+                </div>
+
+                {/* Existing: Floating Insight Cards - Repositioned */}
+                <div className="absolute bottom-8 left-6 animate-float" style={{ animationDelay: '0s' }}>
+                  <div className="glass-card px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xl bg-black/30 backdrop-blur-md border border-white/20">
                     <div className="w-2 h-2 bg-emerald-400 rounded-full animate-ping"></div>
-                    <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Hydration Level: 95%</span>
+                    <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Hydration: 95%</span>
                   </div>
                 </div>
 
-                <div className="absolute top-20 right-6 animate-float" style={{ animationDelay: '1s' }}>
-                  <div className="glass-card px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xl">
-                    <Sparkles size={12} className="text-amber-400" />
-                    <span className="text-[10px] font-bold text-white uppercase tracking-tighter">Skin Tone: Even</span>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-16 left-8 animate-float" style={{ animationDelay: '0.5s' }}>
+                <div className="absolute bottom-24 left-8 animate-float" style={{ animationDelay: '0.5s' }}>
                   <div className="bg-rose-500/90 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-2 shadow-xl shadow-rose-500/20">
                     <UserCheck size={12} className="text-white" />
                     <span className="text-[10px] font-bold text-white uppercase tracking-tighter">500k+ Scans 완료</span>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-24 right-8 animate-float" style={{ animationDelay: '1.5s' }}>
-                  <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-xl shadow-xl border border-white/20">
-                    🍑
                   </div>
                 </div>
               </div>
