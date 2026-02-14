@@ -299,13 +299,12 @@ const MainTool: React.FC = () => {
 
           <main className="flex-grow flex flex-col px-8 relative z-10 pt-4">
             {/* Hero Visual Container */}
-            {/* Hero Visual Container */}
             <div className="relative mb-10 mt-4 group">
               <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-4 ring-white/20">
                 <img
                   src="/hero-image.jpg"
                   alt="K-Beauty AI Mirror Analysis"
-                  className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-[3s] bg-slate-900"
+                  className="w-full h-full object-cover scale-[1.6] object-[center_28%] group-hover:scale-[1.7] transition-transform duration-[3s] bg-slate-900"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     // Fallback to the 'Denim Jacket' K-Beauty style image if user hasn't added their custom file yet
