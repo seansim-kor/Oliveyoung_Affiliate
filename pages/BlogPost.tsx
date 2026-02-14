@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { BLOG_POSTS } from '../content/blogPosts';
 import { ArrowLeft, Calendar, User, Clock, Share2, Sparkles, ChevronRight } from 'lucide-react';
+import { Footer } from '../components/Footer';
 
 export const BlogPost: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -19,11 +20,8 @@ export const BlogPost: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-rose-500/30">
-            {/* Search Engine Optimization: Dynamic Meta Tags would go here in SSR, 
-          for SPA we use semantic HTML for crawler appreciation */}
-
             {/* Top Nav */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-bottom border-white/5 py-4 px-6">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 py-4 px-6">
                 <div className="max-w-4xl mx-auto flex justify-between items-center">
                     <Link to="/blog" className="flex items-center gap-2 text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-white transition-colors">
                         <ArrowLeft size={16} /> BACK TO BLOG
@@ -32,7 +30,7 @@ export const BlogPost: React.FC = () => {
                         <div className="w-8 h-8 bg-gradient-to-tr from-rose-500 to-orange-500 rounded-xl flex items-center justify-center text-white scale-75">
                             <Sparkles size={18} fill="white" />
                         </div>
-                        <span className="text-white font-black text-sm italic tracking-tight hidden md:block">K-BEAUTY MIRROR</span>
+                        <span className="text-white font-black text-sm italic tracking-tight hidden md:block uppercase">K-BEAUTY MIRROR</span>
                     </div>
                     <button className="text-slate-400 hover:text-white transition-colors">
                         <Share2 size={18} />
@@ -78,7 +76,7 @@ export const BlogPost: React.FC = () => {
                     <div dangerouslySetInnerHTML={{ __html: post.content }} />
                 </article>
 
-                {/* Post Footer/Author Box */}
+                {/* Author Box */}
                 <div className="mt-20 p-8 rounded-[2.5rem] bg-white/5 border border-white/10 flex flex-col md:flex-row items-center gap-8">
                     <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-orange-400 via-rose-500 to-violet-500 shrink-0 shadow-xl"></div>
                     <div className="text-center md:text-left">
@@ -97,12 +95,7 @@ export const BlogPost: React.FC = () => {
                 </div>
             </main>
 
-            {/* Related/Footer */}
-            <footer className="border-t border-white/5 py-20 px-6 text-center bg-slate-900/50">
-                <p className="text-slate-600 text-xs font-black uppercase tracking-[0.2em]">
-                    &copy; 2026 K-BEAUTY MIRROR LABS. THE FUTURE OF SKINCARE.
-                </p>
-            </footer>
+            <Footer language="en" />
         </div>
     );
 };

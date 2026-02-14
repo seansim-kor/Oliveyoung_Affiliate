@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BLOG_POSTS } from '../content/blogPosts';
 import { ChevronRight, Calendar, User, Clock, ArrowLeft, Sparkles } from 'lucide-react';
+import { Footer } from '../components/Footer';
 
 export const BlogList: React.FC = () => {
     useEffect(() => {
@@ -87,12 +88,7 @@ export const BlogList: React.FC = () => {
                 </div>
             </main>
 
-            {/* Footer */}
-            <footer className="border-t border-white/5 py-20 px-6 text-center">
-                <p className="text-slate-600 text-xs font-black uppercase tracking-[0.2em]">
-                    &copy; 2026 K-BEAUTY MIRROR LABS. ALL RIGHTS RESERVED.
-                </p>
-            </footer>
+            <Footer language="en" />
         </div>
     );
 };

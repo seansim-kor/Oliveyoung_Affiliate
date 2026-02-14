@@ -39,10 +39,32 @@ Privacy Policy
 - We use Google AdSense for advertising.
 
 4. Contact Us
-For any privacy concerns, please contact our support team.
+For any privacy concerns, please contact our support team at support@k-beauty-mirror.shop.
 
 Last updated: February 2025
-    `
+    `,
+        about: `
+About K-Beauty Mirror
+
+K-Beauty Mirror is a leading AI-driven skincare consultation platform. 
+Our mission is to democratize expert-level dermatological insights using cutting-edge artificial intelligence. 
+Based in Seoul, the heart of global skincare innovation, we combine clinical data with environmental factors to provide 
+the most accurate K-Beauty routines for users worldwide.
+        `,
+        contact: `
+Contact Us
+
+We value your feedback and inquiries.
+Email: support@k-beauty-mirror.shop
+Address: Gangnam-daero, Seoul, Republic of Korea
+Business Hours: Mon-Fri, 9 AM - 6 PM (KST)
+        `,
+        cookies: `
+Cookie Policy
+
+We use cookies to enhance your experience, serve personalized ads, and analyze our traffic. 
+By using our site, you consent to our use of cookies in accordance with our Privacy Policy.
+        `
     },
     ko: {
         terms: `
@@ -84,9 +106,30 @@ K-뷰티 미러를 이용해 주셔서 감사합니다. 본 서비스를 이용�
 - 광고 게재를 위해 Google AdSense를 사용합니다.
 
 4. 문의하기
-개인정보 관련 문의는 고객지원팀으로 연락 주십시오.
+개인정보 관련 문의는 고객지원팀(support@k-beauty-mirror.shop)으로 연락 주십시오.
 
 최종 수정일: 2025년 2월
-    `
+    `,
+        about: `
+서비스 소개
+
+K-뷰티 미러는 최첨단 AI 시스템을 통해 개인별 맞춤 스킨케어 솔루션을 제공하는 혁신적인 플랫폼입니다. 
+우리는 세계 뷰티의 중심인 서울에서 전문가 수준의 피부 진단 기술을 누구나 쉽게 누릴 수 있도록 돕는 것을 사명으로 합니다. 
+단순한 추천을 넘어 사용자의 환경과 데이터를 분석하여 진정한 피부 건강을 찾아드립니다.
+        `,
+        contact: `
+문의하기
+
+서비스 이용 관련 문의나 협업 제안은 언제든지 환영합니다.
+이메일: support@k-beauty-mirror.shop
+주소: 대한민국 서울특별시 강남구 강남대로
+운영 시간: 월-금, 오전 9시 - 오후 6시
+        `,
+        cookies: `
+쿠키 정책
+
+당사는 사용자 경험 개선, 맞춤형 광고 제공 및 트래픽 분석을 위해 쿠키를 사용합니다. 
+웹사이트 이용 시 당사의 개인정보처리방침에 따른 쿠키 사용에 동의하는 것으로 간주됩니다.
+        `
     }
 };
