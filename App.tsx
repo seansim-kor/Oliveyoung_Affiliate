@@ -304,7 +304,7 @@ const MainTool: React.FC = () => {
                 <img
                   src="/hero-image.jpg"
                   alt="K-Beauty AI Mirror Analysis"
-                  className="w-full h-full object-cover scale-[1.6] object-[center_28%] group-hover:scale-[1.7] transition-transform duration-[3s] bg-slate-900"
+                  className="w-full h-full object-cover scale-[1.65] object-[center_42%] group-hover:scale-[1.75] transition-transform duration-[3s] bg-slate-900"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     // Fallback to the 'Denim Jacket' K-Beauty style image if user hasn't added their custom file yet
