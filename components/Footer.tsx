@@ -49,11 +49,11 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
 
             <div className="max-w-4xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div className="text-[10px] uppercase tracking-widest font-bold opacity-40">
-                    © 2025 K-Beauty Mirror. All rights reserved.
+                    © 2026 K-Beauty Mirror. All rights reserved.
                 </div>
                 <div className="flex items-center gap-4 text-xs">
-                    <a href="mailto:support@k-beauty-mirror.shop" className="hover:text-white transition-colors flex items-center gap-2">
-                        <Mail size={14} /> support@k-beauty-mirror.shop
+                    <a href="mailto:simshome.store@gmail.com" className="hover:text-white transition-colors flex items-center gap-2">
+                        <Mail size={14} /> simshome.store@gmail.com
                     </a>
                 </div>
             </div>
