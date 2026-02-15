@@ -281,19 +281,111 @@ const MainTool: React.FC = () => {
       {view === AppView.RESULTS && result && (
         <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50 pb-32">
           <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md p-6 flex justify-between items-center border-b">
-            <h2 className="font-bold">{t.report}</h2>
-            <button onClick={resetApp} className="p-2 bg-slate-100 rounded-full"><RefreshCw size={18} /></button>
-          </header>
-          <main className="p-6 space-y-6">
-            {capturedImage && <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} faceBox={result.faceBox} />}
-            <div className="bg-slate-900 text-white p-6 rounded-3xl">
-              <div className="text-rose-300 text-xs uppercase">{t.skinScore}</div>
-              <div className="text-5xl font-light">{result.overallScore}</div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center text-white">
+                <Sparkles size={16} fill="white" />
+              </div>
+              <h2 className="font-black uppercase tracking-tighter text-slate-900">{t.report}</h2>
             </div>
-            {result.products?.map((p, i) => <ProductCard key={i} product={p} index={i} storeRegion={storeRegion} referralLink={REFERRAL_LINK} />)}
+            <button onClick={resetApp} className="p-2 hover:bg-rose-100 rounded-full transition-colors"><RefreshCw size={18} className="text-rose-500" /></button>
+          </header>
+
+          <main className="p-6 space-y-8">
+            {/* Visual Analysis Results */}
+            {capturedImage && <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} faceBox={result.faceBox} />}
+
+            {/* Score & Age Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
+                <div className="relative z-10">
+                  <div className="text-rose-300 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinScore}</div>
+                  <div className="text-5xl font-light tabular-nums">{result.overallScore}</div>
+                </div>
+                <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/20 rounded-full blur-2xl"></div>
+              </div>
+
+              <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-rose-100 relative overflow-hidden">
+                <div className="relative z-10">
+                  <div className="text-rose-500 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinAge}</div>
+                  <div className="text-5xl font-light text-slate-900 tabular-nums">{result.estimatedAge}</div>
+                </div>
+                <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-100 rounded-full blur-2xl"></div>
+              </div>
+            </div>
+
+            {/* Detailed Clinical Metrics */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.skinType}</div>
+                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinType}</div>
+              </div>
+              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.tone}</div>
+                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinTone}</div>
+              </div>
+              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.sensitivity}</div>
+                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.sensitivityLevel}</div>
+              </div>
+            </div>
+
+            {/* Radar Chart Analysis */}
+            <div className="space-y-4">
+              <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                <UserCheck size={14} className="text-rose-500" />
+                {String(language) === 'ko' ? "피부 밸런스 분석" : "Skin Balance Metrics"}
+              </h3>
+              <SkinRadarChart metrics={result.metrics} />
+            </div>
+
+            {/* Professional Summary */}
+            <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white">
+                  <UserCheck size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">{String(language) === 'ko' ? "전문가 정밀 진단" : "Professional Diagnosis"}</h4>
+                  <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{String(language) === 'ko' ? "AI 스킨 마스터" : "AI Skin Master"}</p>
+                </div>
+              </div>
+              <p className="text-slate-700 text-sm leading-relaxed antialiased italic">
+                "{result.analysisSummary}"
+              </p>
+            </div>
+
+            {/* Local Environment Advice */}
+            {result.weatherAdvice && (
+              <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 flex gap-4 items-start">
+                <div className="p-2 bg-white rounded-xl shadow-sm">
+                  <MapPin size={20} className="text-emerald-500" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-xs font-black text-emerald-900 uppercase tracking-tight">{t.localTip}</h4>
+                  <p className="text-xs text-emerald-700 leading-relaxed font-medium">{result.weatherAdvice}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Products Section */}
+            <div className="space-y-6 pt-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t.curated}</h3>
+                <span className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1 rounded-full">{result.products.length} {String(language) === 'ko' ? "단계" : "Steps"}</span>
+              </div>
+              <div className="space-y-4">
+                {result.products?.map((p, i) => <ProductCard key={i} product={p} index={i} storeRegion={storeRegion} referralLink={REFERRAL_LINK} />)}
+              </div>
+            </div>
           </main>
-          <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t z-30">
-            <Button onClick={handleStickyBuy} fullWidth variant="secondary">{t.shop}</Button>
+
+          <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-white/80 backdrop-blur-xl border-t border-rose-100 z-30">
+            <Button onClick={handleStickyBuy} fullWidth variant="secondary" className="shadow-2xl shadow-rose-500/20">
+              <div className="flex items-center justify-center gap-2">
+                <ShoppingBag size={20} />
+                <span>{t.shop}</span>
+              </div>
+            </Button>
           </div>
           <Footer language={language} />
         </article>
