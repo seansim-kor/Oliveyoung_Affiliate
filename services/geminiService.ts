@@ -64,12 +64,14 @@ export const analyzeSkin = async (
     5. PROFESSIONAL SUMMARY: 4+ sentences of objective clinical findings.
     
     6. MANDATORY 5-STEP ROUTINE (CRITICAL):
-       You MUST suggest EXACTLY 5 products in this specific order:
-       - Step 1: Double Cleanser/Prep
-       - Step 2: Essence / Multi-Toner (Deep Hydration)
-       - Step 3: Targeted Serum or Ampoule (Problem Solver)
-       - Step 4: Barrier Moisturizer / Clinical Sealant
-       - Step 5: High-Performance Sunscreen (Invisible Protection)
+       You MUST suggest EXACTLY 5 products in this specific order. 
+       IMPORTANT: Only suggest REAL, BESTSELLING products currently available on Olive Young. Use exact product names found in the Olive Young Global/KR store to ensure searchability.
+       Recommended Brands: Round Lab, Anua, Skin1004, Cosrx, Beauty of Joseon, Etude, Illyoon, Aestura, Mediheal, Torriden, Manyo, ISOI.
+       - Step 1: Double Cleanser/Prep (e.g., Anua Heartleaf, Manyo Pure Cleansing Oil)
+       - Step 2: Essence / Multi-Toner (e.g., Round Lab Dokdo Toner, Skin1004 Centella Ampoule)
+       - Step 3: Targeted Serum or Ampoule (e.g., Torriden Dive-In Serum, ISOI Blemish Care)
+       - Step 4: Barrier Moisturizer / Clinical Sealant (e.g., Aestura Atobarrier 365, Illyoon Ceramide Ato)
+       - Step 5: High-Performance Sunscreen (e.g., Round Lab Birch Juice, Beauty of Joseon Relief Sun)
        For each product, provide a detailed 'reason' (at least 20 words) explaining why this specific product is necessary for the USER's detected skin conditions.
     
     Return pure JSON with surgically accurate bounding boxes and the face_box.
