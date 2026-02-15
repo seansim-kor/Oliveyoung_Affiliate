@@ -99,7 +99,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
         className="mt-auto w-full py-2.5 px-4 bg-slate-50 text-slate-800 font-medium rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-colors text-sm border border-slate-200 active:scale-95 group/btn"
       >
         <ShoppingBag size={16} className="group-hover/btn:text-rose-500 transition-colors" />
-        {storeRegion === 'KR' ? '올리브영 구매하기' : 'Add to Bundle'}
+        {storeRegion === 'KR' ? '올리브영 구매하기' : 'View on Olive Young'}
         <ExternalLink size={14} className="ml-1 opacity-50" />
       </button>
     </div>
