@@ -45,6 +45,7 @@ export interface AnalysisResult {
   products: Product[];
   issues: Issue[];
   faceBox?: number[]; // [ymin, xmin, ymax, xmax] 0-1000
+  timestamp?: number; // Unix timestamp for history tracking
 }
 
 export enum AppView {

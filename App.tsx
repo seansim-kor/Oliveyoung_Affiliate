@@ -13,6 +13,8 @@ import { DemographicsSelector } from './components/DemographicsSelector';
 import { RewardCard } from './components/RewardCard';
 import { GoogleAd } from './components/GoogleAd';
 import { ShareCard } from './components/ShareCard';
+import { SkinJourney } from './components/SkinJourney';
+import { saveHistory, getHistory } from './services/historyService';
 import { SKIN_GUIDE } from './content/skinGuide';
 import { TERMS_TEXT } from './content/legal';
 import { BlogList } from './pages/BlogList';
@@ -140,7 +142,9 @@ const MainTool: React.FC = () => {
     setError(null);
     try {
       const analysisData = await analyzeSkin(file, selectedLocation, language, demographics);
-      setResult(analysisData);
+      const resultWithTimestamp = { ...analysisData, timestamp: Date.now() };
+      setResult(resultWithTimestamp);
+      saveHistory(resultWithTimestamp);
       setView(AppView.RESULTS);
     } catch (err: any) {
       setError(err.message || t.error);
@@ -396,6 +400,9 @@ const MainTool: React.FC = () => {
               </h3>
               <SkinRadarChart metrics={result.metrics} />
             </div>
+
+            {/* Skin Journey (History) */}
+            <SkinJourney history={getHistory()} />
 
             {/* Professional Summary */}
             <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">
