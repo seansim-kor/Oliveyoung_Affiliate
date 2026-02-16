@@ -16,6 +16,7 @@ export interface Product {
   keyIngredient: string; // New field
   reason: string;
   priceUsd: number;
+  badge?: string; // e.g., "Best Seller", "Holy Grail"
 }
 
 export interface SkinMetrics {

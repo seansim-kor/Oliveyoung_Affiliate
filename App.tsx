@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag, ArrowLeft, Share2 } from 'lucide-react';
 import { Routes, Route, Link } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 import { AppView, LOCATIONS, AnalysisResult, Language, UserDemographics } from './types';
 import { analyzeSkin } from './services/geminiService';
 import { Button } from './components/Button';
@@ -11,6 +12,7 @@ import { AnalysisOverlay } from './components/AnalysisOverlay';
 import { DemographicsSelector } from './components/DemographicsSelector';
 import { RewardCard } from './components/RewardCard';
 import { GoogleAd } from './components/GoogleAd';
+import { ShareCard } from './components/ShareCard';
 import { SKIN_GUIDE } from './content/skinGuide';
 import { TERMS_TEXT } from './content/legal';
 import { BlogList } from './pages/BlogList';
@@ -55,7 +57,8 @@ const TEXTS = {
     faqQ1: "Is my photo stored?",
     faqA1: "No, your photo is processed in real-time and immediately deleted.",
     faqQ2: "Are the products sponsored?",
-    faqA2: "Our AI prioritizes efficacy and user reviews from Olive Young's vast database."
+    faqA2: "Our AI prioritizes efficacy and user reviews from Olive Young's vast database.",
+    share: "Share Result",
   },
   ko: {
     title: "K-뷰티 미러",
@@ -91,7 +94,8 @@ const TEXTS = {
     faqQ1: "내 사진이 저장되나요?",
     faqA1: "아니요, 사진은 실시간 분석 후 즉시 파기되어 안전합니다.",
     faqQ2: "추천 제품은 광고인가요?",
-    faqA2: "아니요, AI는 오직 성분과 올리브영의 실제 사용자 리뷰를 기준으로 추천합니다."
+    faqA2: "아니요, AI는 오직 성분과 올리브영의 실제 사용자 리뷰를 기준으로 추천합니다.",
+    share: "결과 공유하기",
   }
 };
 
@@ -107,6 +111,7 @@ const MainTool: React.FC = () => {
   const [showLegal, setShowLegal] = useState<'none' | 'terms' | 'privacy'>('none');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   const t = TEXTS[language];
 
@@ -161,6 +166,47 @@ const MainTool: React.FC = () => {
   const toggleLanguage = () => setLanguage(prev => prev === 'en' ? 'ko' : 'en');
   const handleStickyBuy = () => window.open(storeRegion === 'Global' ? REFERRAL_LINK : "https://www.oliveyoung.co.kr", '_blank');
 
+  const handleShare = async () => {
+    if (shareCardRef.current) {
+      try {
+        const canvas = await html2canvas(shareCardRef.current, {
+          useCORS: true,
+          backgroundColor: '#0f172a', // slate-900
+          scale: 2 // High res
+        });
+
+        const image = canvas.toDataURL("image/png");
+
+        // Create download link
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = `k-beauty-mirror-result-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Optional: Web Share API if supported
+        if (navigator.share) {
+          const blob = await (await fetch(image)).blob();
+          const file = new File([blob], "skin-analysis.png", { type: "image/png" });
+          try {
+            await navigator.share({
+              title: 'K-Beauty Mirror Result',
+              text: 'Check out my K-Beauty skin analysis!',
+              files: [file]
+            });
+          } catch (e) {
+            console.log('Share API canceled or failed', e);
+          }
+        }
+
+      } catch (err) {
+        console.error("Failed to generate share image", err);
+        alert("Failed to create share image. Please try again.");
+      }
+    }
+  };
+
   const totals = (() => {
     if (!result || !result.products) return { original: 0, discounted: 0, savings: 0 };
     const original = result.products.reduce((acc, curr) => acc + (curr?.priceUsd || 0), 0);
@@ -171,6 +217,11 @@ const MainTool: React.FC = () => {
   return (
     <>
       <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+
+      {/* Hidden Share Card for Capture */}
+      <div className="fixed top-0 left-0 -z-50 opacity-0 pointer-events-none">
+        {result && <ShareCard ref={shareCardRef} result={result} />}
+      </div>
 
       {view === AppView.CAMERA && (
         <CameraCapture onCapture={handleAnalysis} onClose={() => setView(AppView.DEMOGRAPHICS)} onUpload={triggerFileUpload} />
@@ -287,7 +338,15 @@ const MainTool: React.FC = () => {
               </div>
               <h2 className="font-black uppercase tracking-tighter text-slate-900">{t.report}</h2>
             </div>
-            <button onClick={resetApp} className="p-2 hover:bg-rose-100 rounded-full transition-colors"><RefreshCw size={18} className="text-rose-500" /></button>
+
+            <div className="flex items-center gap-2">
+              <button onClick={handleShare} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="Share Result">
+                <Share2 size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
+              </button>
+              <button onClick={resetApp} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="New Analysis">
+                <RefreshCw size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
+              </button>
+            </div>
           </header>
 
           <main className="p-6 space-y-8">

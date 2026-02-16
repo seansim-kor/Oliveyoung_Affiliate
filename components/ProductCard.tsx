@@ -41,8 +41,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
   const config = stepConfig[index] || stepConfig[0];
   const StepIcon = config.icon;
 
+  // Badge Logic
+  const badgeColor = product.badge === 'Best Seller' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-rose-100 text-rose-700 border-rose-200';
+  const isSpecial = !!product.badge;
+
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-md transition-shadow relative overflow-hidden group">
+    <div className={`bg-white p-5 rounded-2xl shadow-sm border ${isSpecial ? 'border-rose-200 ring-1 ring-rose-100' : 'border-slate-100'} flex flex-col h-full hover:shadow-md transition-shadow relative overflow-hidden group`}>
+      {/* Promotional Badge */}
+      {product.badge && (
+        <div className={`absolute top-0 left-0 ${badgeColor} text-[10px] font-bold px-3 py-1.5 rounded-br-xl z-10 border-b border-r shadow-sm uppercase tracking-wide`}>
+          {product.badge}
+        </div>
+      )}
       {/* Discount Badge */}
       {storeRegion === 'Global' && (
         <div className="absolute top-0 right-0 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 shadow-sm">

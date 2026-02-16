@@ -65,8 +65,24 @@ export const analyzeSkin = async (
     
     6. MANDATORY 5-STEP ROUTINE (CRITICAL):
        You MUST suggest EXACTLY 5 products in this specific order. 
-       IMPORTANT: Only suggest REAL, BESTSELLING products currently available on Olive Young. Use exact product names found in the Olive Young Global/KR store to ensure searchability.
-       Recommended Brands: Round Lab, Anua, Skin1004, Cosrx, Beauty of Joseon, Etude, Illyoon, Aestura, Mediheal, Torriden, Manyo, ISOI.
+       Return pure JSON with surgically accurate bounding boxes and the face_box.
+       Example product structure:
+      "products": [
+        {
+          "step": "Step 1: Cleanser",
+          "category": "Oil Cleanser",
+          "brand": "Brand Name",
+          "name": "Product Name",
+          "keyIngredient": "Main Ingredient",
+          "reason": "Why this specific product matches the user's skin analysis.",
+          "priceUsd": 25,
+          "badge": "Best Seller" // or "Holy Grail", "Editor's Pick", "Trending"
+        }
+      ]
+    
+    IMPORTANT: Only suggest REAL, BESTSELLING products currently available on Olive Young. Use exact product names found in the Olive Young Global/KR store to ensure searchability.
+    Recommended Brands: Round Lab, Anua, Skin1004, Cosrx, Beauty of Joseon, Etude, Illyoon, Aestura, Mediheal, Torriden, Manyo, ISOI.
+    assign "Best Seller" or "Holy Grail" badge to 2-3 products that are known for high sales volume.
        - Step 1: Double Cleanser/Prep (e.g., Anua Heartleaf, Manyo Pure Cleansing Oil)
        - Step 2: Essence / Multi-Toner (e.g., Round Lab Dokdo Toner, Skin1004 Centella Ampoule)
        - Step 3: Targeted Serum or Ampoule (e.g., Torriden Dive-In Serum, ISOI Blemish Care)
