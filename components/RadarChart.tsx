@@ -16,8 +16,7 @@ export const SkinRadarChart: React.FC<SkinRadarChartProps> = ({ metrics }) => {
   ];
 
   return (
-    <div className="w-full h-[300px] bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-      <h3 className="text-center text-sm font-semibold text-slate-500 mb-2 uppercase tracking-wide">Skin Balance Analysis</h3>
+    <div className="w-full h-[300px] bg-white rounded-[2.5rem] p-4 shadow-sm border border-slate-100">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
           <PolarGrid stroke="#e2e8f0" />

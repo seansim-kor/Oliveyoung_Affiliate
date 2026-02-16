@@ -1,13 +1,14 @@
 import React from 'react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { AnalysisResult } from '../types';
+import { AnalysisResult, Language } from '../types';
 import { Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 
 interface SkinJourneyProps {
     history: AnalysisResult[];
+    language?: Language;
 }
 
-export const SkinJourney: React.FC<SkinJourneyProps> = ({ history }) => {
+export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'en' }) => {
     if (!history || history.length === 0) {
         return (
             <div className="bg-slate-50 p-6 rounded-3xl text-center border border-slate-100">
@@ -39,8 +40,8 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history }) => {
                         <TrendingUp className="text-rose-500" size={20} />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">My Skin Journey</h3>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">LAST {history.length} SCANS</p>
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{language === 'ko' ? "내 피부 변화" : "My Skin Journey"}</h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{language === 'ko' ? `최근 ${history.length}회 분석` : `LAST ${history.length} SCANS`}</p>
                     </div>
                 </div>
                 {improvement !== 0 && (

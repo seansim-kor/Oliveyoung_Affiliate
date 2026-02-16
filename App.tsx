@@ -147,7 +147,8 @@ const MainTool: React.FC = () => {
       saveHistory(resultWithTimestamp);
       setView(AppView.RESULTS);
     } catch (err: any) {
-      setError(err.message || t.error);
+      console.error("Analysis Error:", err);
+      setError(err.message || String(err));
       setView(AppView.LANDING);
     } finally {
       setAnalyzing(false);
@@ -268,6 +269,13 @@ const MainTool: React.FC = () => {
           </header>
 
           <main className="flex-grow flex flex-col px-8 relative z-10 pt-4">
+            {error && (
+              <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-500">
+                <AlertCircle className="text-rose-500 shrink-0" size={18} />
+                <p className="text-rose-200 text-xs font-medium">{error}</p>
+              </div>
+            )}
+
             <div className="relative mb-10 mt-4 group">
               <div className="w-full aspect-square rounded-[3rem] overflow-hidden relative shadow-2xl ring-4 ring-white/20">
                 <img
@@ -311,7 +319,25 @@ const MainTool: React.FC = () => {
             <section className="space-y-12">
               <h2 className="text-2xl font-black text-white uppercase">{SKIN_GUIDE[language].title}</h2>
               <p className="text-slate-400 text-sm italic">{SKIN_GUIDE[language].intro}</p>
-              {/* ... Add other content items similarly ... */}
+
+              <div className="space-y-10">
+                {SKIN_GUIDE[language].steps.map((step, idx) => (
+                  <div key={idx} className="relative pl-8 border-l border-white/10 group cursor-default">
+                    <div className="absolute -left-[5px] top-1 w-[9px] h-[9px] rounded-full bg-rose-500 group-hover:scale-150 transition-transform shadow-[0_0_8px_rgba(244,63,94,0.6)]"></div>
+                    <h4 className="text-white font-bold text-sm mb-1 uppercase tracking-tight">{step.name}</h4>
+                    <p className="text-slate-400 text-xs leading-relaxed">{step.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {SKIN_GUIDE[language].ingredients.map((ing, idx) => (
+                  <div key={idx} className="glass-card p-4 rounded-3xl border-white/5">
+                    <h5 className="text-rose-400 text-[10px] font-black uppercase mb-1">{ing.name}</h5>
+                    <p className="text-slate-500 text-[9px] leading-tight">{ing.desc}</p>
+                  </div>
+                ))}
+              </div>
             </section>
             <GoogleAd />
           </div>
@@ -327,9 +353,39 @@ const MainTool: React.FC = () => {
       )}
 
       {view === AppView.ANALYZING && (
-        <section className="min-h-screen flex flex-col items-center justify-center bg-white text-center">
-          <h2 className="text-2xl font-bold">{t.analyzing}</h2>
-          <p>{t.analyzingDesc}</p>
+        <section className="min-h-screen flex flex-col items-center justify-center bg-slate-950 text-center p-8 relative overflow-hidden">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-gradient-radial from-rose-500/10 via-transparent to-transparent animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 border-2 border-rose-500/20 rounded-full animate-ping"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 border-2 border-cyan-500/20 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+          </div>
+
+          <div className="relative z-10 space-y-8">
+            <div className="relative w-32 h-32 mx-auto">
+              <div className="absolute inset-0 bg-gradient-to-tr from-orange-500 to-rose-600 rounded-3xl rotate-12 animate-pulse"></div>
+              <div className="absolute inset-0 flex items-center justify-center text-white scale-125">
+                <Sparkles size={48} fill="white" className="animate-bounce" />
+              </div>
+              <div className="absolute -inset-4 border-2 border-white/10 rounded-[2rem] animate-spin-slow"></div>
+            </div>
+
+            <div className="space-y-3">
+              <h2 className="text-3xl font-black text-white uppercase tracking-tighter animate-pulse">{t.analyzing}</h2>
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-slate-400 text-sm font-medium max-w-[240px] leading-relaxed">{t.analyzingDesc}</p>
+                <div className="flex gap-1 mt-2">
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-1.5 h-1.5 bg-rose-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="glass-card px-6 py-3 rounded-2xl border-white/10">
+              <span className="text-[10px] font-black text-rose-300 uppercase tracking-[0.3em]">Precision Scanning Active</span>
+            </div>
+          </div>
         </section>
       )}
 
@@ -402,7 +458,7 @@ const MainTool: React.FC = () => {
             </div>
 
             {/* Skin Journey (History) */}
-            <SkinJourney history={getHistory()} />
+            <SkinJourney history={getHistory()} language={language} />
 
             {/* Professional Summary */}
             <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">

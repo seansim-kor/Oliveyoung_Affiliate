@@ -13,10 +13,14 @@ export interface Product {
   category: string; // e.g., "Toner"
   name: string;
   brand: string;
-  keyIngredient: string; // New field
+  keyIngredient: string;
   reason: string;
   priceUsd: number;
   badge?: string; // e.g., "Best Seller", "Holy Grail"
+  externalPrices?: {
+    amazon?: number;
+    yesstyle?: number;
+  };
 }
 
 export interface SkinMetrics {

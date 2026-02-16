@@ -67,18 +67,20 @@ export const analyzeSkin = async (
        You MUST suggest EXACTLY 5 products in this specific order. 
        Return pure JSON with surgically accurate bounding boxes and the face_box.
        Example product structure:
-      "products": [
-        {
-          "step": "Step 1: Cleanser",
-          "category": "Oil Cleanser",
-          "brand": "Brand Name",
-          "name": "Product Name",
-          "keyIngredient": "Main Ingredient",
-          "reason": "Why this specific product matches the user's skin analysis.",
-          "priceUsd": 25,
-          "badge": "Best Seller" // or "Holy Grail", "Editor's Pick", "Trending"
-        }
-      ]
+       {
+         "step": "Step 1: Cleanser",
+         "category": "Oil Cleanser",
+         "brand": "Brand Name",
+         "name": "Product Name",
+         "keyIngredient": "Main Ingredient",
+         "reason": "At least 20 words of clinical reasoning...",
+         "priceUsd": 25,
+         "badge": "Best Seller",
+         "externalPrices": {
+           "amazon": 22.5,
+           "yesstyle": 24.0
+         }
+       }
     
     IMPORTANT: Only suggest REAL, BESTSELLING products currently available on Olive Young. Use exact product names found in the Olive Young Global/KR store to ensure searchability.
     Recommended Brands: Round Lab, Anua, Skin1004, Cosrx, Beauty of Joseon, Etude, Illyoon, Aestura, Mediheal, Torriden, Manyo, ISOI.
@@ -88,7 +90,11 @@ export const analyzeSkin = async (
        - Step 3: Targeted Serum or Ampoule (e.g., Torriden Dive-In Serum, ISOI Blemish Care)
        - Step 4: Barrier Moisturizer / Clinical Sealant (e.g., Aestura Atobarrier 365, Illyoon Ceramide Ato)
        - Step 5: High-Performance Sunscreen (e.g., Round Lab Birch Juice, Beauty of Joseon Relief Sun)
-       For each product, provide a detailed 'reason' (at least 20 words) explaining why this specific product is necessary for the USER's detected skin conditions.
+       For each product:
+       - Provide a detailed 'reason' (at least 20 words) explaining why this specific product is necessary for the USER's skin conditions.
+       - Provide 'priceUsd' for Olive Young.
+       - Estimate 'amazon' and 'yesstyle' prices if available (numerical values).
+       - Assign a badge if it's a top-tier product.
     
     Return pure JSON with surgically accurate bounding boxes and the face_box.
   `;
@@ -148,7 +154,15 @@ export const analyzeSkin = async (
                 brand: { type: SchemaType.STRING },
                 keyIngredient: { type: SchemaType.STRING },
                 reason: { type: SchemaType.STRING },
-                priceUsd: { type: SchemaType.NUMBER }
+                priceUsd: { type: SchemaType.NUMBER },
+                badge: { type: SchemaType.STRING },
+                externalPrices: {
+                  type: SchemaType.OBJECT,
+                  properties: {
+                    amazon: { type: SchemaType.NUMBER },
+                    yesstyle: { type: SchemaType.NUMBER }
+                  }
+                }
               }
             }
           }
@@ -201,7 +215,15 @@ export const analyzeSkin = async (
             brand: p.brand || "Olive Young Best",
             priceUsd: typeof p.priceUsd === 'string'
               ? parseFloat(p.priceUsd.replace(/[^0-9.]/g, ''))
-              : (Number(p.priceUsd) || 15)
+              : (Number(p.priceUsd) || 15),
+            externalPrices: p.externalPrices ? {
+              amazon: typeof p.externalPrices.amazon === 'string'
+                ? parseFloat(p.externalPrices.amazon.replace(/[^0-9.]/g, ''))
+                : (Number(p.externalPrices.amazon) || undefined),
+              yesstyle: typeof p.externalPrices.yesstyle === 'string'
+                ? parseFloat(p.externalPrices.yesstyle.replace(/[^0-9.]/g, ''))
+                : (Number(p.externalPrices.yesstyle) || undefined)
+            } : undefined
           }));
         } else {
           parsed.products = [];
