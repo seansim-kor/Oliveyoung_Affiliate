@@ -101,7 +101,30 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
                         <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                         <YAxis hide domain={[0, 100]} />
                         <Tooltip
-                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                            trigger="click"
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const data = payload[0].payload;
+                                    return (
+                                        <div className="bg-slate-900/95 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 animate-in fade-in zoom-in duration-200">
+                                            <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">{data.fullDate}</p>
+                                            <div className="flex items-baseline gap-1 mb-2">
+                                                <span className="text-2xl font-black text-white">{data.score}</span>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase">pts</span>
+                                            </div>
+                                            <div className="space-y-1 border-t border-white/5 pt-2">
+                                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
+                                                    Estimated Age: <span className="text-white">{data.age}</span>
+                                                </p>
+                                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
+                                                    Status: <span className="text-rose-400">Archived</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }}
                         />
                         <Area
                             type="monotone"
@@ -110,26 +133,10 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
                             strokeWidth={3}
                             fillOpacity={1}
                             fill="url(#colorScore)"
+                            activeDot={{ r: 6, fill: '#f43f5e', stroke: '#fff', strokeWidth: 2 }}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
-            </div>
-
-            <div className="space-y-3">
-                {history.slice(0, 3).map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100/50">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[10px] font-bold text-slate-400 border border-slate-100 shadow-sm">
-                                {item.overallScore}
-                            </div>
-                            <div>
-                                <p className="text-xs font-bold text-slate-700">{new Date(item.timestamp || Date.now()).toLocaleDateString()}</p>
-                                <p className="text-[10px] text-slate-400 font-semibold">{item.skinType} • {item.estimatedAge} years</p>
-                            </div>
-                        </div>
-                        <ChevronRight size={14} className="text-slate-300" />
-                    </div>
-                ))}
             </div>
         </div>
     );

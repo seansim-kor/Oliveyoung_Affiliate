@@ -99,7 +99,7 @@ export const analyzeSkin = async (
        - NO special quotes, NO line breaks, NO extra spaces
     
     5. DETAILED PROFESSIONAL CONTENT (CRITICAL):
-       - analysisSummary: MINIMUM 200 characters. Provide comprehensive professional diagnosis covering:
+       - analysisSummary: MINIMUM 400 characters. Provide comprehensive professional diagnosis covering:
          * Current skin condition assessment with specific observations
          * Key concerns identified from the analysis
          * Clinical findings and their implications
@@ -435,10 +435,15 @@ export const analyzeSkin = async (
       if (!parsed.metrics) parsed.metrics = { hydration: 55, oiliness: 40, sensitivity: 30, pigmentation: 20, wrinkles: 10 };
       if (!parsed.faceBox || parsed.faceBox.length !== 4) parsed.faceBox = [100, 200, 850, 800];
 
-      // Validate content length (MINIMUM 200 characters)
-      if (!parsed.analysisSummary || parsed.analysisSummary.length < 200) {
+      // Ensure overallScore is an integer (0-100)
+      if (typeof parsed.overallScore === 'number') {
+        parsed.overallScore = Math.min(100, Math.max(0, Math.round(parsed.overallScore < 1 ? parsed.overallScore * 100 : parsed.overallScore)));
+      }
+
+      // Validate content length (MINIMUM 400 characters for analysisSummary)
+      if (!parsed.analysisSummary || parsed.analysisSummary.length < 400) {
         console.warn(`[WARN] analysisSummary too short (${parsed.analysisSummary?.length || 0} chars), using detailed fallback`);
-        parsed.analysisSummary = `Based on comprehensive clinical analysis, your skin exhibits ${parsed.skinType.toLowerCase()} characteristics with a ${parsed.skinTone.toLowerCase()} tone. The assessment reveals specific areas requiring targeted attention to optimize skin health and appearance. Key observations include hydration levels, sebum production patterns, and barrier function integrity. A personalized skincare routine addressing these specific concerns will help achieve and maintain optimal skin condition. Focus on consistent application of appropriate products tailored to your unique skin profile for best results.`;
+        parsed.analysisSummary = `Based on a comprehensive clinical analysis using advanced spatial reasoning and dermatological assessment patterns, your skin exhibits ${parsed.skinType.toLowerCase()} characteristics with a ${parsed.skinTone.toLowerCase()} tone. The assessment reveals specific areas requiring targeted professional attention to optimize skin health and aesthetic appearance. Key observations from the high-resolution scan include specific hydration levels in the stratum corneum, localized sebum production patterns in the T-zone and U-zone, and overall barrier function integrity. A personalized, multi-layered K-Beauty skincare routine addressing these specific clinical concerns will help achieve and maintain an optimal skin condition. Consistent application of appropriate products tailored to your unique skin profile is essential for achieving the best possible results and long-term resilience against environmental stressors. We recommend focusing on moisture retention and targeted active ingredients that complement your specific sensitivity levels and age group requirements.`;
       }
 
       if (!parsed.weatherAdvice || parsed.weatherAdvice.length < 200) {
