@@ -420,6 +420,13 @@ export const analyzeSkin = async (
       if (!parsed.metrics) parsed.metrics = { hydration: 55, oiliness: 40, sensitivity: 30, pigmentation: 20, wrinkles: 10 };
       if (!parsed.faceBox || parsed.faceBox.length !== 4) parsed.faceBox = [100, 200, 850, 800];
 
+      console.log("[DEBUG] Final parsed result:");
+      console.log("  - skinType:", parsed.skinType);
+      console.log("  - products count:", parsed.products?.length);
+      console.log("  - products:", parsed.products);
+      console.log("  - overallScore:", parsed.overallScore);
+      console.log("  - Full object:", parsed);
+
       return parsed;
 
     } catch (error: any) {

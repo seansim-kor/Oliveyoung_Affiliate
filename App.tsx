@@ -157,19 +157,28 @@ const MainTool: React.FC = () => {
   };
 
   const handleAnalysis = async (file: File) => {
+    console.log("[DEBUG] Starting analysis...");
     const imageUrl = URL.createObjectURL(file);
     setCapturedImage(imageUrl);
     setView(AppView.ANALYZING);
     setAnalyzing(true);
     setError(null);
     try {
+      console.log("[DEBUG] Calling analyzeSkin...");
       const analysisData = await analyzeSkin(file, selectedLocation, language, demographics);
+      console.log("[DEBUG] Analysis complete, result:", analysisData);
+      console.log("[DEBUG] Products count:", analysisData?.products?.length);
+
       const resultWithTimestamp = { ...analysisData, timestamp: Date.now() };
+      console.log("[DEBUG] Setting result state...");
       setResult(resultWithTimestamp);
       saveHistory(resultWithTimestamp);
+
+      console.log("[DEBUG] Setting view to RESULTS");
       setView(AppView.RESULTS);
+      console.log("[DEBUG] View state updated to RESULTS");
     } catch (err: any) {
-      console.error("Analysis Error:", err);
+      console.error("[ERROR] Analysis Error:", err);
       setError(err.message || String(err));
       setView(AppView.LANDING);
     } finally {
@@ -428,134 +437,166 @@ const MainTool: React.FC = () => {
         </section>
       )}
 
-      {view === AppView.RESULTS && result && (
-        <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50 pb-32">
-          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md p-6 flex justify-between items-center border-b">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center text-white">
-                <Sparkles size={16} fill="white" />
-              </div>
-              <h2 className="font-black uppercase tracking-tighter text-slate-900">{t.report}</h2>
-            </div>
+      {view === AppView.RESULTS && result && (() => {
+        console.log("[DEBUG] Rendering RESULTS view");
+        console.log("[DEBUG] Current view:", view);
+        console.log("[DEBUG] Result exists:", !!result);
+        console.log("[DEBUG] Result.products:", result.products);
 
-            <div className="flex items-center gap-2">
-              <button onClick={handleShare} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="Share Result">
-                <Share2 size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
-              </button>
-              <button onClick={resetApp} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="New Analysis">
-                <RefreshCw size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
-              </button>
-            </div>
-          </header>
-
-          <main className="p-6 space-y-8">
-            {/* Visual Analysis Results */}
-            {capturedImage && <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} faceBox={result.faceBox} />}
-
-            {/* Score & Age Cards */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
-                <div className="relative z-10">
-                  <div className="text-rose-300 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinScore}</div>
-                  <div className="text-5xl font-light tabular-nums">{result.overallScore}</div>
-                </div>
-                <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/20 rounded-full blur-2xl"></div>
-              </div>
-
-              <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-rose-100 relative overflow-hidden">
-                <div className="relative z-10">
-                  <div className="text-rose-500 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinAge}</div>
-                  <div className="text-5xl font-light text-slate-900 tabular-nums">{result.estimatedAge}</div>
-                </div>
-                <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-100 rounded-full blur-2xl"></div>
+        if (!result.products || result.products.length === 0) {
+          console.error("[ERROR] Result has no products!");
+          return (
+            <div className="min-h-screen flex items-center justify-center p-6">
+              <div className="text-center">
+                <p className="text-red-500 font-bold mb-4">분석 결과에 제품 정보가 없습니다.</p>
+                <button onClick={resetApp} className="px-6 py-3 bg-rose-500 text-white rounded-lg">
+                  다시 시도
+                </button>
               </div>
             </div>
+          );
+        }
 
-            {/* Detailed Clinical Metrics */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
-                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.skinType}</div>
-                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinType}</div>
-              </div>
-              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
-                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.tone}</div>
-                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinTone}</div>
-              </div>
-              <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
-                <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.sensitivity}</div>
-                <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.sensitivityLevel}</div>
-              </div>
-            </div>
-
-            {/* Radar Chart Analysis */}
-            <div className="space-y-4">
-              <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                <UserCheck size={14} className="text-rose-500" />
-                {String(language) === 'ko' ? "피부 밸런스 분석" : "Skin Balance Metrics"}
-              </h3>
-              <SkinRadarChart metrics={result.metrics} />
-            </div>
-
-            {/* Skin Journey (History) */}
-            <SkinJourney
-              history={getHistory()}
-              language={language}
-              isLoggedIn={!!user}
-              onLoginClick={() => setView(AppView.LOGIN)}
-            />
-
-            {/* Professional Summary */}
-            <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white">
-                  <UserCheck size={20} />
+        return (
+          <article className="min-h-screen flex flex-col max-w-md mx-auto bg-rose-50/50 pb-32">
+            <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md p-6 flex justify-between items-center border-b">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-rose-500 rounded-lg flex items-center justify-center text-white">
+                  <Sparkles size={16} fill="white" />
                 </div>
-                <div>
-                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">{String(language) === 'ko' ? "전문가 정밀 진단" : "Professional Diagnosis"}</h4>
-                  <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{String(language) === 'ko' ? "AI 스킨 마스터" : "AI Skin Master"}</p>
-                </div>
+                <h2 className="font-black uppercase tracking-tighter text-slate-900">{t.report}</h2>
               </div>
-              <p className="text-slate-700 text-sm leading-relaxed antialiased italic">
-                "{result.analysisSummary}"
-              </p>
-            </div>
 
-            {/* Local Environment Advice */}
-            {result.weatherAdvice && (
-              <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 flex gap-4 items-start">
-                <div className="p-2 bg-white rounded-xl shadow-sm">
-                  <MapPin size={20} className="text-emerald-500" />
+              <div className="flex items-center gap-2">
+                <button onClick={handleShare} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="Share Result">
+                  <Share2 size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
+                </button>
+                <button onClick={resetApp} className="p-2 hover:bg-rose-100 rounded-full transition-colors group" title="New Analysis">
+                  <RefreshCw size={18} className="text-slate-600 group-hover:text-rose-500 transition-colors" />
+                </button>
+              </div>
+            </header>
+
+            <main className="p-6 space-y-8">
+              {/* Visual Analysis Results */}
+              {capturedImage && <AnalysisOverlay imageSrc={capturedImage} issues={result.issues} faceBox={result.faceBox} />}
+
+              {/* Score & Age Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="text-rose-300 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinScore}</div>
+                    <div className="text-5xl font-light tabular-nums">{result.overallScore}</div>
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/20 rounded-full blur-2xl"></div>
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-xs font-black text-emerald-900 uppercase tracking-tight">{t.localTip}</h4>
-                  <p className="text-xs text-emerald-700 leading-relaxed font-medium">{result.weatherAdvice}</p>
+
+                <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-rose-100 relative overflow-hidden">
+                  <div className="relative z-10">
+                    <div className="text-rose-500 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinAge}</div>
+                    <div className="text-5xl font-light text-slate-900 tabular-nums">{result.estimatedAge}</div>
+                  </div>
+                  <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-100 rounded-full blur-2xl"></div>
                 </div>
               </div>
-            )}
 
-            {/* Products Section */}
-            <div className="space-y-6 pt-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t.curated}</h3>
-                <span className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1 rounded-full">{result.products.length} {String(language) === 'ko' ? "단계" : "Steps"}</span>
+              {/* Detailed Clinical Metrics */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                  <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.skinType}</div>
+                  <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinType}</div>
+                </div>
+                <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                  <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.tone}</div>
+                  <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.skinTone}</div>
+                </div>
+                <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+                  <div className="text-[9px] font-black text-slate-400 uppercase mb-1">{t.sensitivity}</div>
+                  <div className="text-xs font-bold text-slate-800 line-clamp-1">{result.sensitivityLevel}</div>
+                </div>
               </div>
+
+              {/* Radar Chart Analysis */}
               <div className="space-y-4">
-                {result.products?.map((p, i) => <ProductCard key={i} product={p} index={i} storeRegion={storeRegion} referralLink={REFERRAL_LINK} />)}
+                <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                  <UserCheck size={14} className="text-rose-500" />
+                  {String(language) === 'ko' ? "피부 밸런스 분석" : "Skin Balance Metrics"}
+                </h3>
+                {(() => {
+                  try {
+                    return <SkinRadarChart metrics={result.metrics} />;
+                  } catch (error) {
+                    console.error("[ERROR] RadarChart rendering failed:", error);
+                    return (
+                      <div className="w-full h-[300px] bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-100 flex items-center justify-center">
+                        <p className="text-sm text-slate-500">차트를 불러올 수 없습니다</p>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
-            </div>
-          </main>
 
-          <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-white/80 backdrop-blur-xl border-t border-rose-100 z-30">
-            <Button onClick={handleStickyBuy} fullWidth variant="secondary" className="shadow-2xl shadow-rose-500/20">
-              <div className="flex items-center justify-center gap-2">
-                <ShoppingBag size={20} />
-                <span>{t.shop}</span>
+              {/* Skin Journey (History) */}
+              <SkinJourney
+                history={getHistory()}
+                language={language}
+                isLoggedIn={!!user}
+                onLoginClick={() => setView(AppView.LOGIN)}
+              />
+
+              {/* Professional Summary */}
+              <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-rose-500 flex items-center justify-center text-white">
+                    <UserCheck size={20} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-tight">{String(language) === 'ko' ? "전문가 정밀 진단" : "Professional Diagnosis"}</h4>
+                    <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{String(language) === 'ko' ? "AI 스킨 마스터" : "AI Skin Master"}</p>
+                  </div>
+                </div>
+                <p className="text-slate-700 text-sm leading-relaxed antialiased italic">
+                  "{result.analysisSummary}"
+                </p>
               </div>
-            </Button>
-          </div>
-          <Footer language={language} />
-        </article>
-      )}
+
+              {/* Local Environment Advice */}
+              {result.weatherAdvice && (
+                <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 flex gap-4 items-start">
+                  <div className="p-2 bg-white rounded-xl shadow-sm">
+                    <MapPin size={20} className="text-emerald-500" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-black text-emerald-900 uppercase tracking-tight">{t.localTip}</h4>
+                    <p className="text-xs text-emerald-700 leading-relaxed font-medium">{result.weatherAdvice}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Products Section */}
+              <div className="space-y-6 pt-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">{t.curated}</h3>
+                  <span className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1 rounded-full">{result.products.length} {String(language) === 'ko' ? "단계" : "Steps"}</span>
+                </div>
+                <div className="space-y-4">
+                  {result.products?.map((p, i) => <ProductCard key={i} product={p} index={i} storeRegion={storeRegion} referralLink={REFERRAL_LINK} />)}
+                </div>
+              </div>
+            </main>
+
+            <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto p-6 bg-white/80 backdrop-blur-xl border-t border-rose-100 z-30">
+              <Button onClick={handleStickyBuy} fullWidth variant="secondary" className="shadow-2xl shadow-rose-500/20">
+                <div className="flex items-center justify-center gap-2">
+                  <ShoppingBag size={20} />
+                  <span>{t.shop}</span>
+                </div>
+              </Button>
+            </div>
+            <Footer language={language} />
+          </article>
+        );
+      })()}
       {view === AppView.LOGIN && (
         <LoginView
           language={language}
