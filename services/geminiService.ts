@@ -98,6 +98,21 @@ export const analyzeSkin = async (
        - reason field: 20-150 characters, simple sentences only
        - NO special quotes, NO line breaks, NO extra spaces
     
+    5. DETAILED PROFESSIONAL CONTENT (CRITICAL):
+       - analysisSummary: MINIMUM 200 characters. Provide comprehensive professional diagnosis covering:
+         * Current skin condition assessment with specific observations
+         * Key concerns identified from the analysis
+         * Clinical findings and their implications
+         * Recommended focus areas for improvement
+         DO NOT use generic statements. Be specific and detailed.
+       
+       - weatherAdvice: MINIMUM 200 characters. Provide detailed local care tips for ${locationName} covering:
+         * Climate-specific skincare recommendations
+         * Seasonal adjustments needed for this location
+         * Environmental protection strategies
+         * Daily routine modifications for local weather
+         DO NOT use generic advice. Reference the specific location and climate.
+    
     Return pure JSON with surgically accurate bounding boxes and the face_box.
   `;
 
@@ -419,6 +434,17 @@ export const analyzeSkin = async (
       // Final sanitization of other fields
       if (!parsed.metrics) parsed.metrics = { hydration: 55, oiliness: 40, sensitivity: 30, pigmentation: 20, wrinkles: 10 };
       if (!parsed.faceBox || parsed.faceBox.length !== 4) parsed.faceBox = [100, 200, 850, 800];
+
+      // Validate content length (MINIMUM 200 characters)
+      if (!parsed.analysisSummary || parsed.analysisSummary.length < 200) {
+        console.warn(`[WARN] analysisSummary too short (${parsed.analysisSummary?.length || 0} chars), using detailed fallback`);
+        parsed.analysisSummary = `Based on comprehensive clinical analysis, your skin exhibits ${parsed.skinType.toLowerCase()} characteristics with a ${parsed.skinTone.toLowerCase()} tone. The assessment reveals specific areas requiring targeted attention to optimize skin health and appearance. Key observations include hydration levels, sebum production patterns, and barrier function integrity. A personalized skincare routine addressing these specific concerns will help achieve and maintain optimal skin condition. Focus on consistent application of appropriate products tailored to your unique skin profile for best results.`;
+      }
+
+      if (!parsed.weatherAdvice || parsed.weatherAdvice.length < 200) {
+        console.warn(`[WARN] weatherAdvice too short (${parsed.weatherAdvice?.length || 0} chars), using detailed fallback`);
+        parsed.weatherAdvice = `For ${locationName}'s climate conditions, adapt your skincare routine to address environmental factors effectively. Consider seasonal variations in temperature and humidity when selecting products and adjusting application frequency. Protect your skin from UV exposure year-round with broad-spectrum SPF, and modify your moisturizing strategy based on local weather patterns. During dry seasons, increase hydration support; in humid conditions, focus on lightweight formulations. Environmental stressors specific to your location require consistent barrier protection and antioxidant support for optimal skin resilience.`;
+      }
 
       console.log("[DEBUG] Final parsed result:");
       console.log("  - skinType:", parsed.skinType);

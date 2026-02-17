@@ -44,11 +44,26 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
     }
 
     // Format data for chart (reverse chronologically for display, but chart needs chronological)
-    const chartData = [...history].reverse().map(item => ({
-        date: new Date(item.timestamp || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        score: item.overallScore,
-        age: item.estimatedAge
-    }));
+    const chartData = [...history].reverse().map((item, idx) => {
+        const dateObj = new Date(item.timestamp || Date.now());
+        const dateStr = dateObj.toLocaleDateString(language === 'ko' ? 'ko-KR' : 'en-US', {
+            month: 'short',
+            day: 'numeric'
+        });
+        const timeStr = dateObj.toLocaleTimeString(language === 'ko' ? 'ko-KR' : 'en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+
+        return {
+            date: history.length > 5 ? dateStr : `${dateStr} ${timeStr}`,
+            fullDate: `${dateStr} ${timeStr}`,
+            score: item.overallScore,
+            age: item.estimatedAge,
+            index: idx + 1
+        };
+    });
 
     const latest = history[0];
     const first = history[history.length - 1];

@@ -356,9 +356,33 @@ const MainTool: React.FC = () => {
               <p className="text-slate-400 text-sm">{t.desc}</p>
             </div>
 
+            {/* Environment Selection */}
+            <div className="mb-8 p-5 rounded-[2rem] glass-card border-white/10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-rose-500/20 rounded-xl">
+                  <MapPin size={18} className="text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-black text-white uppercase tracking-widest">{language === 'ko' ? "내 주변 환경" : "MY ENVIRONMENT"}</h3>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{selectedLocation}</p>
+                </div>
+              </div>
+              <select
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white text-sm font-medium focus:ring-2 focus:ring-rose-500 outline-none transition-all appearance-none cursor-pointer"
+              >
+                {LOCATIONS.map(loc => (
+                  <option key={loc.id} value={loc.name} className="bg-slate-900 text-white">
+                    {loc.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="mt-auto mb-10 space-y-4">
-              <button onClick={handleStartFlow} className="w-full bg-gradient-to-r from-orange-500 to-rose-600 py-5 rounded-3xl text-white font-black uppercase">{t.start}</button>
-              <button onClick={triggerFileUpload} className="w-full py-5 glass-card rounded-3xl text-white/80 font-bold uppercase">{t.upload}</button>
+              <button onClick={handleStartFlow} className="w-full bg-gradient-to-r from-orange-500 to-rose-600 py-5 rounded-3xl text-white font-black uppercase shadow-2xl shadow-rose-600/20 active:scale-95 transition-all">{t.start}</button>
+              <button onClick={triggerFileUpload} className="w-full py-5 glass-card rounded-3xl text-white/80 font-bold uppercase active:scale-95 transition-all">{t.upload}</button>
             </div>
           </main>
 
