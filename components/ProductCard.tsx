@@ -64,37 +64,64 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, index, storeR
         </div>
       )}
 
-      {/* Step Header */}
-      <div className="flex items-center gap-2 mb-3">
-        <div className={`p-1.5 rounded-lg ${config.bg} ${config.color}`}>
-          <StepIcon size={14} />
+      {/* Product Image & Info */}
+      <div className="flex gap-4 mb-4">
+        <div className="w-24 h-24 shrink-0 rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm relative group cursor-pointer" onClick={() => handleBuyClick('OliveYoung')}>
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = `https://placehold.co/400x400/png?text=${encodeURIComponent(product.brand)}`;
+              }}
+            />
+          ) : (
+            <div className={`w-full h-full ${config.bg} flex items-center justify-center`}>
+              <ShoppingBag className={config.color} size={24} />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
         </div>
-        <span className={`text-[10px] font-black tracking-[0.2em] ${config.color} uppercase`}>
-          {config.label}
-        </span>
+
+        <div className="flex-grow min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <div className={`p-1 rounded-md ${config.bg} ${config.color}`}>
+              <StepIcon size={10} />
+            </div>
+            <span className={`text-[9px] font-black tracking-[0.1em] ${config.color} uppercase truncate`}>
+              {config.label}
+            </span>
+          </div>
+          <h3 className="text-sm font-black text-slate-900 leading-tight mb-1 line-clamp-2">{product.name}</h3>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-2">{product.brand}</p>
+
+          <div className="flex items-center gap-2">
+            <span className="text-rose-500 font-black text-sm">${discountedPrice}</span>
+            <span className="text-slate-300 line-through text-[10px] decoration-2">${originalPrice}</span>
+          </div>
+        </div>
       </div>
 
-      <h3 className="text-lg font-black text-slate-900 mb-1 leading-tight tracking-tight">{product.name}</h3>
-      <p className="text-sm text-slate-400 font-bold mb-3 uppercase tracking-wider">{product.brand}</p>
-
-      {/* Key Ingredient Pill */}
-      {product.keyIngredient && (
-        <div className="mb-4">
-          <span className="inline-block px-2.5 py-1 bg-slate-50 text-slate-500 text-[10px] font-bold rounded-lg uppercase tracking-widest border border-slate-100">
-            {product.keyIngredient}
-          </span>
+      {/* Expected Effect Box */}
+      {product.expectedEffect && (
+        <div className="mb-4 p-3 bg-gradient-to-r from-rose-50 to-white rounded-xl border border-rose-100 flex items-center gap-3">
+          <div className="p-1.5 bg-white rounded-full shadow-sm text-rose-500">
+            <Sparkles size={12} />
+          </div>
+          <p className="text-[10px] font-bold text-rose-700 uppercase tracking-wide leading-tight">
+            {product.expectedEffect}
+          </p>
         </div>
       )}
 
-      {/* Price Comparison Section */}
-      <div className="bg-slate-50 rounded-2xl p-4 mb-4 space-y-3">
-        <div className="flex justify-between items-center text-xs">
-          <span className="font-bold text-slate-800">Olive Young Global</span>
-          <div className="flex items-center gap-2">
-            <span className="text-rose-500 font-black">${discountedPrice}</span>
-            <span className="text-slate-400 line-through scale-90">${originalPrice}</span>
-          </div>
-        </div>
+      {/* Detail Text */}
+      <p className="text-xs text-slate-600 leading-relaxed font-medium mb-4 line-clamp-3">
+        {product.reason}
+      </p>
+
+      {/* Price Comparison Table (Compact) */}
+      <div className="bg-slate-50/50 rounded-xl p-3 mb-4 space-y-2 border border-slate-100">
 
         {product.externalPrices?.amazon && (
           <div className="flex justify-between items-center text-[10px] border-t border-slate-200/50 pt-2">

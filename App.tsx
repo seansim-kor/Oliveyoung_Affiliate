@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag, ArrowLeft, Share2 } from 'lucide-react';
+import { Camera, Upload, ChevronRight, RefreshCw, MapPin, Sparkles, AlertCircle, Globe, UserCheck, Gift, ShoppingBag, ArrowLeft, Share2, LogIn, LogOut, User as UserIcon } from 'lucide-react';
 import { Routes, Route, Link } from 'react-router-dom';
 import html2canvas from 'html2canvas';
-import { AppView, LOCATIONS, AnalysisResult, Language, UserDemographics } from './types';
+import { AppView, LOCATIONS, AnalysisResult, Language, UserDemographics, User } from './types';
 import { analyzeSkin } from './services/geminiService';
 import { Button } from './components/Button';
 import { ProductCard } from './components/ProductCard';
 import { SkinRadarChart } from './components/RadarChart';
+import { LoginView } from './components/LoginView';
 import { CameraCapture } from './components/CameraCapture';
 import { AnalysisOverlay } from './components/AnalysisOverlay';
 import { DemographicsSelector } from './components/DemographicsSelector';
@@ -112,12 +113,19 @@ const MainTool: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showLegal, setShowLegal] = useState<'none' | 'terms' | 'privacy'>('none');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const shareCardRef = useRef<HTMLDivElement>(null);
 
   const t = TEXTS[language];
 
   useEffect(() => {
+    // Auto-login logic
+    const savedUser = localStorage.getItem('kbeauty_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (userTimezone === 'Asia/Seoul') {
       setStoreRegion('KR');
@@ -132,6 +140,20 @@ const MainTool: React.FC = () => {
   const handleDemographicsComplete = (data: UserDemographics) => {
     setDemographics(data);
     setView(AppView.CAMERA);
+  };
+
+  const handleLogin = (email: string, name: string, rememberMe: boolean) => {
+    const newUser = { email, name, isLoggedIn: true };
+    setUser(newUser);
+    if (rememberMe) {
+      localStorage.setItem('kbeauty_user', JSON.stringify(newUser));
+    }
+    setView(AppView.LANDING);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('kbeauty_user');
   };
 
   const handleAnalysis = async (file: File) => {
@@ -265,6 +287,23 @@ const MainTool: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link to="/blog" className="text-[10px] font-black uppercase tracking-widest px-4 py-2 glass-card rounded-full text-white">BLOG</Link>
               <button onClick={toggleLanguage} className="text-[10px] font-black uppercase tracking-widest px-4 py-2 glass-card rounded-full text-white">{language === 'en' ? 'KO' : 'EN'}</button>
+
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="p-2 bg-white/10 backdrop-blur-md rounded-full text-white border border-white/10 hover:bg-white/20 transition-all"
+                  title={user.name}
+                >
+                  <LogOut size={16} className="text-rose-500" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setView(AppView.LOGIN)}
+                  className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-rose-500 rounded-full text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition-all"
+                >
+                  {language === 'ko' ? "로그인" : "Login"}
+                </button>
+              )}
             </div>
           </header>
 
@@ -458,7 +497,12 @@ const MainTool: React.FC = () => {
             </div>
 
             {/* Skin Journey (History) */}
-            <SkinJourney history={getHistory()} language={language} />
+            <SkinJourney
+              history={getHistory()}
+              language={language}
+              isLoggedIn={!!user}
+              onLoginClick={() => setView(AppView.LOGIN)}
+            />
 
             {/* Professional Summary */}
             <div className="bg-rose-500/5 rounded-[2.5rem] p-8 border border-rose-100">
@@ -511,6 +555,13 @@ const MainTool: React.FC = () => {
           </div>
           <Footer language={language} />
         </article>
+      )}
+      {view === AppView.LOGIN && (
+        <LoginView
+          language={language}
+          onBack={() => setView(AppView.LANDING)}
+          onLogin={handleLogin}
+        />
       )}
     </>
   );

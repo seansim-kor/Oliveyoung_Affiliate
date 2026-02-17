@@ -6,9 +6,31 @@ import { Calendar, TrendingUp, AlertCircle } from 'lucide-react';
 interface SkinJourneyProps {
     history: AnalysisResult[];
     language?: Language;
+    isLoggedIn?: boolean;
+    onLoginClick?: () => void;
 }
 
-export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'en' }) => {
+export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'en', isLoggedIn = false, onLoginClick }) => {
+    if (!isLoggedIn) {
+        return (
+            <div className="bg-slate-900 p-8 rounded-[2rem] text-center border border-white/5 relative overflow-hidden group cursor-pointer" onClick={onLoginClick}>
+                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="flex justify-center mb-4">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center text-rose-500 border border-white/10">
+                        <Lock size={24} />
+                    </div>
+                </div>
+                <h3 className="text-white font-black uppercase tracking-widest mb-2">{language === 'ko' ? "로그인이 필요합니다" : "Login Required"}</h3>
+                <p className="text-slate-400 text-xs font-medium leading-relaxed max-w-[200px] mx-auto">
+                    {language === 'ko' ? "내 피부 변화를 추적하고 개인화된 리포트를 보관하려면 로그인해 주세요." : "Please login to track your skin journey and save personalized reports."}
+                </p>
+                <div className="mt-6">
+                    <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] border-b border-rose-500/30 pb-1">{language === 'ko' ? "지금 로그인하기" : "Login Now"}</span>
+                </div>
+            </div>
+        );
+    }
+
     if (!history || history.length === 0) {
         return (
             <div className="bg-slate-50 p-6 rounded-3xl text-center border border-slate-100">

@@ -15,6 +15,8 @@ export interface Product {
   brand: string;
   keyIngredient: string;
   reason: string;
+  expectedEffect: string; // e.g., "Reduces redness and strengthens barrier"
+  imageUrl?: string; // Optional product image URL
   priceUsd: number;
   badge?: string; // e.g., "Best Seller", "Holy Grail"
   externalPrices?: {
@@ -52,8 +54,15 @@ export interface AnalysisResult {
   timestamp?: number; // Unix timestamp for history tracking
 }
 
+export interface User {
+  email: string;
+  name: string;
+  isLoggedIn: boolean;
+}
+
 export enum AppView {
   LANDING = 'LANDING',
+  LOGIN = 'LOGIN',
   DEMOGRAPHICS = 'DEMOGRAPHICS',
   CAMERA = 'CAMERA',
   ANALYZING = 'ANALYZING',
