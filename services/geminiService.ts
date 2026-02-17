@@ -58,50 +58,45 @@ export const analyzeSkin = async (
        - 'pigmentation': 100 = pigmented, 0 = clear.
        - 'wrinkles': 100 = deep wrinkles, 0 = firm.
     
-    4. MANDATORY 5-STEP ROUTINE (CRITICAL):
-       You MUST suggest EXACTLY 5 REAL products in this specific order:
-       - Step 1: Prep (Toner/Pad)
-       - Step 2: Multi-Toner/Essence
-       - Step 3: Targeted Treatment (Serum/Ampoule)
-       - Step 4: Sealant (Moisturizer/Cream)
-       - Step 5: Protection (Sunscreen)
+    4. PRODUCT RECOMMENDATIONS (EXACTLY 5 REQUIRED):
+       Return EXACTLY 5 products with these EXACT formats:
        
-       FORBIDDEN PLACEHOLDERS - NEVER USE:
-       - K-Beauty Secret
-       - Olive Young Best
-       - Product Name
-       - Generic placeholders
+       Product 1:
+       - step: "Step 1: Prep" (EXACTLY this format, max 20 characters)
+       - category: "Toner"
+       - name: "Anua Heartleaf 77 Percent Soothing Toner"
+       - brand: "Anua"
+       - keyIngredient: "Houttuynia Cordata"
+       - reason: "Gently exfoliates and soothes sensitive skin while repairing moisture barrier" (20-150 words)
+       - expectedEffect: "Clear calm skin" (max 50 characters)
+       - imageUrl: "https://image.oliveyoung.co.kr/uploads/images/goods/550/10/0000/0014/A00000014557613ko.jpg?l=ko"
+       - priceUsd: 19
        
-       ONLY USE REAL PRODUCTS from verified brands:
-       Anua, COSRX, Beauty of Joseon, Round Lab, Skin1004, Etude, Illyoon, Aestura, Mediheal, Torriden, Manyo, ISOI
+       Product 2:
+       - step: "Step 2: Essence" (EXACTLY this format)
+       - name: "COSRX Advanced Snail 96 Mucin Power Essence"
+       - brand: "COSRX"
        
-       VERIFIED BESTSELLERS (Use these exact products):
-       Step 1: Anua Heartleaf 77 Percent Soothing Toner
-       Step 2: COSRX Advanced Snail 96 Mucin Power Essence
-       Step 3: Beauty of Joseon Glow Serum Propolis plus Niacinamide
-       Step 4: Beauty of Joseon Dynasty Cream
-       Step 5: Beauty of Joseon Relief Sun Rice plus Probiotics
-
-       JSON FORMAT RULES:
-       - Return ONLY valid JSON, NO markdown
-       - NO comments in JSON
-       - Escape ALL special characters in strings
-       - Use simple ASCII characters only in reason and expectedEffect fields
-       - ALL 5 products MUST include: step, category, name, brand, keyIngredient, reason, expectedEffect, imageUrl, priceUsd
-
-       Example:
-       {
-         "step": "Step 1: Prep",
-         "category": "Toner",
-         "name": "Anua Heartleaf 77 Percent Soothing Toner",
-         "brand": "Anua",
-         "keyIngredient": "Houttuynia Cordata",
-         "reason": "Gently exfoliates and soothes sensitive skin while repairing the moisture barrier for a clearer texture.",
-         "expectedEffect": "Clear calm skin texture",
-         "imageUrl": "https://image.oliveyoung.co.kr/uploads/images/goods/550/10/0000/0014/A00000014557613ko.jpg?l=ko",
-         "priceUsd": 19,
-         "badge": "Best Seller"
-       }
+       Product 3:
+       - step: "Step 3: Serum" (EXACTLY this format)
+       - name: "Beauty of Joseon Glow Serum"
+       - brand: "Beauty of Joseon"
+       
+       Product 4:
+       - step: "Step 4: Moisturizer" (EXACTLY this format)
+       - name: "Beauty of Joseon Dynasty Cream"
+       - brand: "Beauty of Joseon"
+       
+       Product 5:
+       - step: "Step 5: Sunscreen" (EXACTLY this format)
+       - name: "Beauty of Joseon Relief Sun"
+       - brand: "Beauty of Joseon"
+       
+       CRITICAL RULES:
+       - step field: ONLY "Step N: Category" format, NEVER add product names or descriptions
+       - All text fields: Use ONLY simple ASCII characters
+       - reason field: 20-150 characters, simple sentences only
+       - NO special quotes, NO line breaks, NO extra spaces
     
     Return pure JSON with surgically accurate bounding boxes and the face_box.
   `;
@@ -150,14 +145,38 @@ export const analyzeSkin = async (
               type: SchemaType.OBJECT,
               required: ["step", "category", "name", "brand", "reason", "expectedEffect", "imageUrl", "priceUsd"],
               properties: {
-                step: { type: SchemaType.STRING },
-                category: { type: SchemaType.STRING },
-                name: { type: SchemaType.STRING },
-                brand: { type: SchemaType.STRING },
-                keyIngredient: { type: SchemaType.STRING },
-                reason: { type: SchemaType.STRING },
-                expectedEffect: { type: SchemaType.STRING },
-                imageUrl: { type: SchemaType.STRING },
+                step: {
+                  type: SchemaType.STRING,
+                  description: "Format: 'Step N: Category' (max 30 chars)",
+                },
+                category: {
+                  type: SchemaType.STRING,
+                  description: "Product category (max 50 chars)",
+                },
+                name: {
+                  type: SchemaType.STRING,
+                  description: "Product name (max 100 chars)",
+                },
+                brand: {
+                  type: SchemaType.STRING,
+                  description: "Brand name (max 50 chars)",
+                },
+                keyIngredient: {
+                  type: SchemaType.STRING,
+                  description: "Main ingredient (max 100 chars)",
+                },
+                reason: {
+                  type: SchemaType.STRING,
+                  description: "Why this product (20-200 chars)",
+                },
+                expectedEffect: {
+                  type: SchemaType.STRING,
+                  description: "Expected result (max 100 chars)",
+                },
+                imageUrl: {
+                  type: SchemaType.STRING,
+                  description: "Product image URL",
+                },
                 priceUsd: { type: SchemaType.NUMBER },
                 badge: { type: SchemaType.STRING },
                 externalPrices: {
@@ -234,8 +253,22 @@ export const analyzeSkin = async (
       try {
         parsed = JSON.parse(cleanJson);
       } catch (err: any) {
-        console.error("JSON Parse Error. Cleaned Text:", cleanJson.substring(0, 1000));
-        console.error("Error at position:", err.message);
+        console.error("=== JSON PARSE ERROR ===");
+        console.error("Error message:", err.message);
+
+        // Extract position from error message
+        const posMatch = err.message.match(/position (\d+)/);
+        if (posMatch) {
+          const pos = parseInt(posMatch[1]);
+          const contextStart = Math.max(0, pos - 100);
+          const contextEnd = Math.min(cleanJson.length, pos + 100);
+          console.error("\nContext around position", pos, ":");
+          console.error(cleanJson.substring(contextStart, contextEnd));
+          console.error(" ".repeat(Math.min(100, pos - contextStart)) + "^ ERROR HERE");
+        }
+
+        console.error("\nFull cleaned JSON:");
+        console.error(cleanJson);
 
         // EMERGENCY FALLBACK: Try to extract just the essential fields
         try {
@@ -342,15 +375,39 @@ export const analyzeSkin = async (
         const aiProduct = parsed.products ? parsed.products[i] : null;
         const fallback = FALLBACK_PRODUCTS[i];
 
+        // VALIDATE AND SANITIZE AI PRODUCT DATA
+        let step = aiProduct?.step || fallback.step;
+        let name = aiProduct?.name || fallback.name;
+        let reason = aiProduct?.reason || fallback.reason;
+        let expectedEffect = aiProduct?.expectedEffect || fallback.expectedEffect;
+
+        // Truncate if too long (AI sometimes generates garbage)
+        if (step.length > 30) {
+          console.warn(`[WARN] Step field too long (${step.length} chars), using fallback`);
+          step = fallback.step;
+        }
+        if (name.length > 150) {
+          console.warn(`[WARN] Name field too long (${name.length} chars), truncating`);
+          name = name.substring(0, 150);
+        }
+        if (reason.length > 300) {
+          console.warn(`[WARN] Reason field too long (${reason.length} chars), truncating`);
+          reason = reason.substring(0, 300);
+        }
+        if (expectedEffect.length > 100) {
+          console.warn(`[WARN] ExpectedEffect field too long (${expectedEffect.length} chars), truncating`);
+          expectedEffect = expectedEffect.substring(0, 100);
+        }
+
         // Merge AI content with fallbacks for ANY missing or empty values
         finalProducts.push({
-          step: fallback.step, // Force correct step labeling
+          step: step,
           category: aiProduct?.category || fallback.category,
-          name: (aiProduct?.name && aiProduct.name.length > 2) ? aiProduct.name : fallback.name,
+          name: (name && name.length > 2) ? name : fallback.name,
           brand: (aiProduct?.brand && aiProduct.brand.length > 1) ? aiProduct.brand : fallback.brand,
           keyIngredient: aiProduct?.keyIngredient || fallback.keyIngredient,
-          reason: (aiProduct?.reason && aiProduct.reason.length > 10) ? aiProduct.reason : fallback.reason,
-          expectedEffect: aiProduct?.expectedEffect || fallback.expectedEffect,
+          reason: (reason && reason.length > 10) ? reason : fallback.reason,
+          expectedEffect: expectedEffect,
           imageUrl: aiProduct?.imageUrl || fallback.imageUrl,
           priceUsd: Number(aiProduct?.priceUsd) || fallback.priceUsd,
           badge: aiProduct?.badge || fallback.badge,
