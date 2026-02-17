@@ -510,7 +510,9 @@ const MainTool: React.FC = () => {
                 <div className="bg-slate-900 text-white p-6 rounded-[2rem] shadow-xl relative overflow-hidden">
                   <div className="relative z-10">
                     <div className="text-rose-300 text-[10px] font-black uppercase tracking-widest mb-1">{t.skinScore}</div>
-                    <div className="text-5xl font-light tabular-nums">{result.overallScore}</div>
+                    <div className="text-5xl font-light tabular-nums">
+                      {result.overallScore < 1 ? Math.round(result.overallScore * 100) : Math.round(result.overallScore)}
+                    </div>
                   </div>
                   <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-rose-500/20 rounded-full blur-2xl"></div>
                 </div>
@@ -566,6 +568,12 @@ const MainTool: React.FC = () => {
                 language={language}
                 isLoggedIn={!!user}
                 onLoginClick={() => setView(AppView.LOGIN)}
+                onSelectEntry={(entry) => {
+                  console.log("[DEBUG] Selection historical entry:", entry);
+                  setResult(entry);
+                  // Scroll to top to show results
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
               />
 
               {/* Professional Summary */}

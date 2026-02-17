@@ -8,10 +8,12 @@ interface SkinJourneyProps {
     language?: Language;
     isLoggedIn?: boolean;
     onLoginClick?: () => void;
+    onSelectEntry?: (entry: AnalysisResult) => void;
 }
 
-export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'en', isLoggedIn = false, onLoginClick }) => {
+export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'en', isLoggedIn = false, onLoginClick, onSelectEntry }) => {
     if (!isLoggedIn) {
+        // ... (keep current return)
         return (
             <div className="bg-slate-900 p-8 rounded-[2rem] text-center border border-white/5 relative overflow-hidden group cursor-pointer" onClick={onLoginClick}>
                 <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -32,6 +34,7 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
     }
 
     if (!history || history.length === 0) {
+        // ... (keep current return)
         return (
             <div className="bg-slate-50 p-6 rounded-3xl text-center border border-slate-100">
                 <div className="flex justify-center mb-3">
@@ -59,8 +62,9 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
         return {
             date: history.length > 5 ? dateStr : `${dateStr} ${timeStr}`,
             fullDate: `${dateStr} ${timeStr}`,
-            score: item.overallScore,
+            score: item.overallScore < 1 ? Math.round(item.overallScore * 100) : Math.round(item.overallScore),
             age: item.estimatedAge,
+            original: item, // Keep reference to original result
             index: idx + 1
         };
     });
@@ -83,14 +87,22 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
                 </div>
                 {improvement !== 0 && (
                     <div className={`px-3 py-1 rounded-full text-xs font-bold ${improvement > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
-                        {improvement > 0 ? '+' : ''}{improvement} pts
+                        {improvement > 0 ? '+' : ''}{improvement.toFixed(0)} pts
                     </div>
                 )}
             </div>
 
-            <div className="h-[200px] w-full mb-6">
+            <div className="h-[220px] w-full mb-2">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={chartData}>
+                    <AreaChart
+                        data={chartData}
+                        onClick={(data) => {
+                            if (data && data.activePayload && data.activePayload.length) {
+                                const clickedEntry = data.activePayload[0].payload.original;
+                                if (onSelectEntry) onSelectEntry(clickedEntry);
+                            }
+                        }}
+                    >
                         <defs>
                             <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
@@ -116,9 +128,7 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
                                                 <p className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
                                                     Estimated Age: <span className="text-white">{data.age}</span>
                                                 </p>
-                                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">
-                                                    Status: <span className="text-rose-400">Archived</span>
-                                                </p>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">{language === 'ko' ? "클릭하여 결과 보기" : "Click to view results"}</p>
                                             </div>
                                         </div>
                                     );
@@ -133,11 +143,12 @@ export const SkinJourney: React.FC<SkinJourneyProps> = ({ history, language = 'e
                             strokeWidth={3}
                             fillOpacity={1}
                             fill="url(#colorScore)"
-                            activeDot={{ r: 6, fill: '#f43f5e', stroke: '#fff', strokeWidth: 2 }}
+                            activeDot={{ r: 8, fill: '#f43f5e', stroke: '#fff', strokeWidth: 3, cursor: 'pointer' }}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
+            <p className="text-[9px] text-center text-slate-400 font-bold uppercase tracking-wider">{language === 'ko' ? "그래프의 점을 클릭하면 과거 분석 결과를 볼 수 있습니다" : "Tap on a data point to view past results"}</p>
         </div>
     );
 };
