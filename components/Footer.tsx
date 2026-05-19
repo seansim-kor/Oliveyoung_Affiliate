@@ -31,6 +31,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
                     <ul className="grid grid-cols-1 gap-3 text-xs font-semibold">
                         <li><Link to="/" className="hover:text-rose-400 transition-colors uppercase tracking-tight">{isKo ? "홈" : "Home"}</Link></li>
                         <li><Link to="/blog" className="hover:text-rose-400 transition-colors uppercase tracking-tight">{isKo ? "블로그" : "Blog"}</Link></li>
+                        <li><Link to="/faq" className="hover:text-rose-400 transition-colors uppercase tracking-tight">{isKo ? "자주 묻는 질문" : "FAQ"}</Link></li>
                         <li><Link to="/about" className="hover:text-rose-400 transition-colors uppercase tracking-tight">{isKo ? "소개" : "About Us"}</Link></li>
                         <li><Link to="/contact" className="hover:text-rose-400 transition-colors uppercase tracking-tight">{isKo ? "문의" : "Contact"}</Link></li>
                     </ul>
@@ -43,6 +44,7 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
                         <li><Link to="/privacy" className="hover:text-rose-400 transition-colors flex items-center gap-2 uppercase tracking-tight"><Shield size={12} /> {isKo ? "개인정보처리방침" : "Privacy Policy"}</Link></li>
                         <li><Link to="/terms" className="hover:text-rose-400 transition-colors flex items-center gap-2 uppercase tracking-tight"><FileText size={12} /> {isKo ? "이용약관" : "Terms of Service"}</Link></li>
                         <li><Link to="/cookies" className="hover:text-rose-400 transition-colors flex items-center gap-2 uppercase tracking-tight"><Globe size={12} /> {isKo ? "쿠키 정책" : "Cookie Policy"}</Link></li>
+                        <li><Link to="/affiliate-disclosure" className="hover:text-rose-400 transition-colors flex items-center gap-2 uppercase tracking-tight"><Info size={12} /> {isKo ? "제휴 공시" : "Affiliate Disclosure"}</Link></li>
                     </ul>
                 </div>
             </div>
@@ -59,10 +61,17 @@ export const Footer: React.FC<FooterProps> = ({ language }) => {
             </div>
 
             {/* Bottom SEO Disclaimer */}
-            <div className="max-w-4xl mx-auto mt-8 text-[9px] leading-relaxed opacity-30 text-center">
+            <div className="max-w-4xl mx-auto mt-8 text-[9px] leading-relaxed opacity-30 text-center space-y-2">
+                <p>
                 {isKo
                     ? "의학적 조언 대용이 될 수 없으며, 모든 추천 제품은 올리브영의 공개 데이터를 바탕으로 함을 밝힙니다."
                     : "Not a substitute for medical advice. All recommendations are based on publicly available data from Olive Young."}
+                </p>
+                <p>
+                {isKo
+                    ? "이 사이트는 올리브영 글로벌 제휴 프로그램에 참여하고 있으며, 적격 구매에 대해 수수료를 받을 수 있습니다."
+                    : "This site is a participant in the Olive Young Global affiliate program and may earn commissions on qualifying purchases."}
+                </p>
             </div>
         </footer>
     );

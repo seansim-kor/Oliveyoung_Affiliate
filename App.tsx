@@ -21,7 +21,11 @@ import { TERMS_TEXT } from './content/legal';
 import { BlogList } from './pages/BlogList';
 import { BlogPost } from './pages/BlogPost';
 import { LegalPage } from './pages/LegalPage';
+import { FaqPage } from './pages/FaqPage';
+import { AffiliateDisclosurePage } from './pages/AffiliateDisclosurePage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { Footer } from './components/Footer';
+import { CookieConsent } from './components/CookieConsent';
 
 const REFERRAL_LINK = "https://global.oliveyoung.com/member/join?reco_id=71161220260209121639";
 
@@ -414,11 +418,27 @@ const MainTool: React.FC = () => {
             <GoogleAd />
           </div>
 
+          {/* 제휴 공시 배너 — AdSense Thin Affiliate 판정 방지 */}
+          <div className="mx-6 mb-8 p-4 rounded-2xl bg-white/5 border border-white/10">
+            <p className="text-[10px] text-slate-400 text-center leading-relaxed">
+              {language === 'ko'
+                ? '이 사이트는 올리브영 글로벌 제휴 프로그램에 참여하고 있습니다. 추천 링크를 통한 구매 시 소정의 수수료를 받을 수 있으며, 이는 추가 비용 없이 무료 서비스 유지에 사용됩니다.'
+                : 'This site participates in the Olive Young Global affiliate program. We may earn a small commission from purchases made through our links at no extra cost to you.'}
+              {' '}
+              <Link to="/affiliate-disclosure" className="text-rose-400 underline">
+                {language === 'ko' ? '자세히 보기' : 'Learn more'}
+              </Link>
+            </p>
+          </div>
+
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-12 opacity-50 px-8">
             <Link to="/about" className="text-[10px] font-bold uppercase text-white">About</Link>
+            <Link to="/blog" className="text-[10px] font-bold uppercase text-white">Blog</Link>
+            <Link to="/faq" className="text-[10px] font-bold uppercase text-white">FAQ</Link>
             <Link to="/contact" className="text-[10px] font-bold uppercase text-white">Contact</Link>
             <Link to="/privacy" className="text-[10px] font-bold uppercase text-white">Privacy</Link>
             <Link to="/terms" className="text-[10px] font-bold uppercase text-white">Terms</Link>
+            <Link to="/affiliate-disclosure" className="text-[10px] font-bold uppercase text-white">Disclosure</Link>
           </div>
           <Footer language={language} />
         </article>
@@ -647,17 +667,24 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<MainTool />} />
-      <Route path="/blog" element={<BlogList />} />
-      <Route path="/blog/:id" element={<BlogPost />} />
-      <Route path="/about" element={<LegalPage language={language} />} />
-      <Route path="/contact" element={<LegalPage language={language} />} />
-      <Route path="/privacy" element={<LegalPage language={language} />} />
-      <Route path="/terms" element={<LegalPage language={language} />} />
-      <Route path="/cookies" element={<LegalPage language={language} />} />
-      <Route path="/legal/:type" element={<LegalPage language={language} />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<MainTool />} />
+        <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/faq" element={<FaqPage language={language} />} />
+        <Route path="/affiliate-disclosure" element={<AffiliateDisclosurePage language={language} />} />
+        <Route path="/disclaimer" element={<AffiliateDisclosurePage language={language} />} />
+        <Route path="/about" element={<LegalPage language={language} />} />
+        <Route path="/contact" element={<LegalPage language={language} />} />
+        <Route path="/privacy" element={<LegalPage language={language} />} />
+        <Route path="/terms" element={<LegalPage language={language} />} />
+        <Route path="/cookies" element={<LegalPage language={language} />} />
+        <Route path="/legal/:type" element={<LegalPage language={language} />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+      <CookieConsent language={language} />
+    </>
   );
 };
 

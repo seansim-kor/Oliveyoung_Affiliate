@@ -13,6 +13,8 @@ export const BlogPost: React.FC = () => {
         window.scrollTo(0, 0);
         if (!post) {
             navigate('/blog');
+        } else {
+            document.title = `${post.title} | K-Beauty Mirror Blog`;
         }
     }, [post, navigate]);
 

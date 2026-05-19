@@ -19,7 +19,17 @@ export const LegalPage: React.FC<LegalPageProps> = ({ language }) => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    }, [type]);
+        // 각 페이지별 고유 타이틀 설정 — SEO에서 매우 중요
+        const titles: Record<string, { en: string; ko: string }> = {
+            privacy: { en: 'Privacy Policy | K-Beauty Mirror', ko: '개인정보처리방침 | K-뷰티 미러' },
+            terms: { en: 'Terms of Service | K-Beauty Mirror', ko: '이용약관 | K-뷰티 미러' },
+            about: { en: 'About Us | K-Beauty Mirror', ko: '서비스 소개 | K-뷰티 미러' },
+            contact: { en: 'Contact Us | K-Beauty Mirror', ko: '문의하기 | K-뷰티 미러' },
+            cookies: { en: 'Cookie Policy | K-Beauty Mirror', ko: '쿠키 정책 | K-뷰티 미러' },
+        };
+        const pageTitle = titles[type]?.[language] || 'K-Beauty Mirror';
+        document.title = pageTitle;
+    }, [type, language]);
 
     const getContent = () => {
         const textData = TERMS_TEXT[language];

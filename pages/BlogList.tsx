@@ -7,6 +7,7 @@ import { Footer } from '../components/Footer';
 export const BlogList: React.FC = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
+        document.title = 'K-Beauty Insights Blog | Latest Skincare Trends & AI Analysis | K-Beauty Mirror';
     }, []);
 
     return (
