@@ -2,6 +2,7 @@ name = "k-beauty-mirror"
 type = "javascript"
 main = "src/index.ts"
 compatibility_date = "2026-02-09"
+pages_build_output_dir = "dist"
 
 [build]
 command = "npm run build"
